@@ -5,8 +5,8 @@ Export simulated trips for the Android app.
   parity  -> android/core/src/test/resources/parity/<name>.csv.gz + <name>.expected.json
              (the Python engine's judgments; the Kotlin port must reproduce them exactly)
 
-Run from anywhere (needs the engine repo, i.e. D:\\TF_Hyundai\\development):
-    python backend/tools/export_trips.py --engine-root D:\\TF_Hyundai\\development --android android
+Run from anywhere (needs the engine repo, i.e. development):
+    python backend/tools/export_trips.py --engine-root development --android android
 
 CSV format (data contract v3, one row per 0.1 s): header = data_spec.signals.CHANNELS order,
 empty cell = NaN (float) and -1 is written for unknown ints. Floats are written as the exact

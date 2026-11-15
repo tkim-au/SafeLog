@@ -2,7 +2,7 @@
 <!--
   Debug builds only: merged into the debug APK, absent from release.
   Test signals the Pleos emulator cannot produce, sent from adb (app vehicle/TestSignals.kt,
-  android/tools/test-signal.sh, docs/2_개발/시험_신호_넣기.md).
+  android/tools/test-signal.sh).
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>

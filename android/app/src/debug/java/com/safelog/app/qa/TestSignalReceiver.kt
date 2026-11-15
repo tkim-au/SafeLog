@@ -17,7 +17,7 @@ import com.safelog.core.json.Json
  * app is one [DemoCommands] line, e.g. `--es app 'replay commute_city 10'` (the buttons of the app's 시연 panel).
  * The reply (result data) is the current state as JSON; result code 0 = applied, 1 = some entry refused.
  * Every command is also logged as one `SafeLogQA` JSON line, which qa/soak collects.
- * Usage and examples: android/tools/test-signal.sh, docs/2_개발/시험_신호_넣기.md.
+ * Usage and examples: android/tools/test-signal.sh.
  */
 class TestSignalReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

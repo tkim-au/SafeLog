@@ -16,7 +16,6 @@ import java.util.concurrent.CopyOnWriteArraySet
  * Entry points (src/debug only): `qa.TestSignalReceiver` for adb (`android/tools/test-signal.sh`) and the test console
  * page served by `qa.TestConsoleProvider` on the device's 127.0.0.1:8077 (`test-signal.sh open`), which also shows
  * [seen], what the app receives. Release builds have none of them and never wrap a source (BuildConfig.DEBUG).
- * See docs/2_개발/시험_신호_넣기.md.
  *
  * - **frame**: data-contract channels ([DataContract.ALL_CHANNELS] names), held in every 10 Hz frame until cleared,
  *   like a car's ON_CHANGE value. The engine dead-reckons navigation distances from the moment a value changes,

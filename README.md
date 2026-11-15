@@ -12,6 +12,7 @@
 | 개발에 쓴 에뮬레이터 | Pleos Connect Emulator **v2.1.0** (Android 14, API 34) |
 | 화면 규격 | **2560×1440 px, 160 dpi, 가로**. 앱이 뜨는 영역은 1682×1210 dp |
 | 인터넷 | 필요 없음. 판정과 기록은 모두 차 안에서 끝납니다 |
+| 시연 영상 | [`demo/`](demo/) |
 
 ## 1. 실행 방법
 
@@ -110,6 +111,7 @@ macOS에서 `bash build_and_test.sh`(Windows는 `BUILD_AND_TEST.cmd`)를 실행�
 | 폴더 | 내용 |
 |---|---|
 | `apk/` | 제출용 release APK |
+| `demo/` | 시연 영상 |
 | `android/app/` | 차량 앱 (Kotlin, Jetpack Compose): 화면, 차 신호 연결(`vehicle/`), 화면 연결(`live/`) |
 | `android/core/` | 판정 엔진, 포인트 장부, 주행 중 코치. 안드로이드 없이 시험할 수 있는 순수 Kotlin |
 | `backend/` | 선택 사항인 서버(FastAPI)와, 차와 서버가 함께 쓰는 계약 |

@@ -3,7 +3,7 @@ thresholds.yaml (engine repo) -> android/core/src/main/resources/safelog/engine_
 
 The Kotlin engine reads every threshold from this file, so the PC (Python) and the car (Kotlin) always use the
 same numbers. Re-run after editing thresholds.yaml:
-    python backend/tools/export_engine_config.py --engine-root D:\\TF_Hyundai\\development
+    python backend/tools/export_engine_config.py --engine-root development
 """
 from __future__ import annotations
 

@@ -14,7 +14,7 @@ Order matters: part 1 is required, parts 2 and 3 build on it. All commands run i
 
 ## Part 1 · SafeLog-Sim + PyTorch (GPU training) — 15 min
 
-1. `cd D:\TF_Hyundai\development`
+1. `cd D:\SafeLog\development`
 2. `powershell -ExecutionPolicy Bypass -File tools\setup_windows.ps1`
    It creates `.venv`, installs PyTorch CUDA 12.6, numpy/scipy/pyyaml and SUMO,
    checks the GPU and runs a smoke test.
@@ -51,7 +51,7 @@ Install the Windows version as well to get the GUI (`sumo-gui`, `netedit`) and t
    "DirectX End-User Runtime" from Microsoft, then retry.
 4. For data collection, start it without a visible window (saves the GPU):
    `D:\CARLA_0.9.16\CarlaUE4.exe -quality-level=Low -RenderOffScreen`
-5. In a second PowerShell, inside `D:\TF_Hyundai\development`:
+5. In a second PowerShell, inside `D:\SafeLog\development`:
    `.\.venv\Scripts\pip install carla==0.9.16`  (must match the server version)
    `.\.venv\Scripts\pip install -r D:\CARLA_0.9.16\PythonAPI\carla\requirements.txt`
 6. One test trip:
@@ -72,7 +72,7 @@ text: it is usually a version mismatch between `pip install carla` and the serve
 | SUMO | 1.27.x | no | `sumo --version` |
 | CARLA | 0.9.16 (server zip + `carla==0.9.16` wheel) | yes, 8 GB | `CarlaUE4.exe -quality-level=Low` |
 
-## Part 4 · Full runs (copy-paste, in `D:\TF_Hyundai\development`)
+## Part 4 · Full runs (copy-paste, in `D:\SafeLog\development`)
 
 ```powershell
 # one-time extras for watching and plotting
@@ -115,7 +115,7 @@ The trip viewer works on all three datasets (`sim_v3`, `sumo_v3`, `carla_v3`); w
 **Stress test first** (about 10–15 min with 6 workers). It runs 17 hard conditions with fixed seeds (1 Hz speed, heavy dropouts, no heading/navigation, noisy steering, a cluster that reads 6 % high, rain/night, cut-in storms, expressway, rural curves, every driver type, a worst case), plus 200 garbage-input fuzz cases:
 
 ```powershell
-cd D:\TF_Hyundai\development
+cd D:\SafeLog\development
 .\.venv\Scripts\Activate.ps1
 python -X utf8 -m evaluation.stress_test --gate model_training\checkpoints\gate.pt --trips 60 --workers 6
 ```

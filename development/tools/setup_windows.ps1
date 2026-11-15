@@ -1,5 +1,5 @@
 # SafeLog development setup for Windows 10/11 + RTX 3060 Ti
-# Run in PowerShell from D:\TF_Hyundai\development :
+# Run in PowerShell from D:\SafeLog\development :
 #   powershell -ExecutionPolicy Bypass -File tools\setup_windows.ps1
 # Prerequisite: Python 3.12 (64-bit) from python.org with the "py" launcher. See INSTALL.md.
 $ErrorActionPreference = "Stop"

@@ -1,4 +1,4 @@
-# Non-stop GPU training for the SafeLog gate. Run from D:\TF_Hyundai\development:
+# Non-stop GPU training for the SafeLog gate. Run from D:\SafeLog\development:
 #     powershell -ExecutionPolicy Bypass -File tools\run_forever.ps1
 # Stop:   press Ctrl+C, or in another window:  New-Item datasets\forever\STOP
 # Resume: run this script again (it continues where it stopped).

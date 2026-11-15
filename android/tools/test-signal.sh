@@ -13,7 +13,7 @@
 #       screen live|sample, sample park|drive|idle|praise|insurance
 #
 # 기기는 -s emulator-5554 또는 ANDROID_SERIAL로 정합니다. 여러 세션이 adb를 같이 쓰니 정해 주는 편이 안전합니다.
-# 채널 이름·값과 예시: docs/2_개발/시험_신호_넣기.md
+# 채널 이름: DataContract.ALL_CHANNELS (android/core), 설명: android/app/src/main/java/com/safelog/app/vehicle/TestSignals.kt
 set -eu
 
 ADB="${ADB:-$HOME/Library/Android/sdk/platform-tools/adb}"

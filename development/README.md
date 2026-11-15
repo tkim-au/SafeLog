@@ -22,7 +22,7 @@ plus the simulators and training loop used to prove it. Built 2026-11-06.
 ## Run it (Windows, RTX 3060 Ti)
 
 ```powershell
-cd D:\TF_Hyundai\development
+cd D:\SafeLog\development
 powershell -ExecutionPolicy Bypass -File tools\setup_windows.ps1     # venv, CUDA PyTorch, SUMO, GPU check, smoke test
 .\.venv\Scripts\python run_pipeline.py --trips 3000 --workers 8      # full loop, about 15-25 min
 ```

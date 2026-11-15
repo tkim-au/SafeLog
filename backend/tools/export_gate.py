@@ -1,8 +1,8 @@
 """
 Turn the PC's trained gate (model_training/checkpoints/gate.pt) into the bundle the Android app loads.
 
-    python backend/tools/export_gate.py --engine-root D:\\TF_Hyundai\\development \\
-        --checkpoint D:\\TF_Hyundai\\development\\model_training\\checkpoints\\gate.pt \\
+    python backend/tools/export_gate.py --engine-root development \\
+        --checkpoint development\\model_training\\checkpoints\\gate.pt \\
         --out android/app/src/main/assets/gate/gate_v3.json
 
 What it checks and does
