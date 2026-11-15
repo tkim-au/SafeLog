@@ -1,0 +1,168 @@
+# SafeLog thresholds — every number has a source tag.
+# [LAW-KR]   Korean Road Traffic Act / Enforcement Decree / Rules
+# [TESLA]    Tesla Safety Score public formula (tesla.com/support/safety-score)
+# [PROG]     Progressive Snapshot FAQ (7 mph in 1 s ~ 0.32 g)
+# [NICHD]    Simons-Morton et al. 2012/2013 elevated g-force events (-0.45 g / +0.35 g / 0.5 g lat)
+# [ISO15622] ISO 15622:2018 ACC comfort envelope (-3.5 m/s^2, jerk 2.5 m/s^3)
+# [NDS-LC]   naturalistic lane change studies (UMTRI IVBSS, Chalmers 2024): LC duration ~5-6 s
+# [TEAM]     team initial value, to be tuned with simulation + field disputes
+# All accelerations are 1-second averages of longitudinal acceleration (Tesla/Progressive definition: "speed change in one second").
+
+general:
+  base_hz: 10
+  min_sample_hz_for_kinematics: 1.0     # [TEAM] works at 1 Hz using delta-v over 1 s
+  min_sample_hz_for_jerk: 5.0           # [TEAM] jerk is ABSTAIN below 5 Hz
+  max_signal_age_s: 1.5                 # [TEAM] older sample -> channel treated as missing
+  min_opportunities_to_report: 3        # [TEAM] team plan v0.4 principle 3
+  min_trip_s: 30                        # [TEAM] shorter recordings (app restart, aborted trip) are not judged at all (stress-test fuzz finding)
+  external_forcing_lookback_s: 3.0      # [TEAM] FCA within 3 s before a manoeuvre -> forced, ABSTAIN
+  adas_exclusion: true                  # [TESLA] behaviour while cruise/SCC engaged is the car's, not the driver's
+  # Guard bands: we only praise when the measured value is inside the boundary by more than the
+  # measurement uncertainty (asymmetric decision rule; false praise is worse than a missed praise).
+  guard_kin_g: 0.02                     # 10 Hz speed: ~0.01 g noise on 1-s delta-v
+  guard_kin_g_lowrate: 0.04             # 1-2 Hz speed: interpolation + 1 km/h quantisation
+  guard_lead_s: 0.5                     # lane-change onset is estimated from steering (~0.5 s uncertainty)
+  guard_lead_m: 5                       # navigation distance granularity (after dead-reckoning between ~1 Hz updates)
+  guard_speed_kph: 1.0                  # [TEAM] speed praise only if below the limit by 1 km/h + 1 % (display rounding,
+  guard_speed_frac: 0.01                #        reading error); truth uses no guard (stress test v3 finding)
+  steering_ratio_uncertainty: 0.12      # [TEAM] car's true steering ratio unknown until calibrated from heading (+-12 %)
+  guard_frac: 0.0
+
+smooth_stop:
+  min_entry_speed_kph: 30               # team plan v0.4 3-2
+  success_max_decel_g: 0.30             # [TESLA][PROG] hard-braking boundary
+  excellent_max_decel_g: 0.20           # team plan "very smooth"; Tesla v1 0.1-0.3 g ratio band
+  stop_speed_kph: 1.0
+
+smooth_launch:
+  start_max_speed_kph: 1.0
+  end_speed_kph: 20
+  window_s: 15
+  success_max_accel_g: 0.30             # [PROG] 7 mph/s; NICHD rapid start 0.35 g
+  excellent_max_accel_g: 0.20
+
+anticipatory_braking:                   # "coast first, then brake gently"
+  min_entry_speed_kph: 40
+  min_coast_before_brake_s: 2.0         # [TEAM] eco-driving guidance; Tesla: "engage brake early"
+  max_peak_decel_g: 0.25
+
+turn_signal_turn:
+  urban_min_lead_m: 30                  # [LAW-KR] Enforcement Decree Annex 2: 30 m before the point
+  expressway_min_lead_m: 100            # [LAW-KR] 100 m on expressways
+  approach_window_m: 300
+
+lane_change_signal:
+  min_speed_kph: 40
+  min_lead_s: 3.0                       # [TEAM] 3 s at 40 km/h ~ 33 m (matches 30 m law); California 5 s
+  no_tbt_within_m: 500                  # avoid confusing turns/curves with lane changes
+  min_lateral_offset_m: 2.5
+  max_duration_s: 10.0
+  min_duration_s: 2.0
+  max_net_heading_change_deg: 6.0
+
+smooth_lane_change:
+  min_duration_s: 3.0                   # [NDS-LC] typical 5-6 s; < 3 s is abrupt
+  max_lat_accel_g: 0.20                 # Tesla counts lateral > 0.2 g as the base band
+
+smooth_turn:
+  success_max_lat_g: 0.30               # [TESLA] aggressive turning 0.4 g; [NDS] typical max 0.25 g
+  excellent_max_lat_g: 0.25
+
+speed_limit:
+  window_s: 60
+  tolerance_kph: 0                      # cluster speed already reads high; no extra tolerance
+  success_min_fraction: 0.95            # team plan v0.4
+  sustain_s_for_risk: 10                # risk monitor: over +10 % for 10 s
+
+school_zone:
+  limit_kph: 30                         # [LAW-KR] child protection zone 30 km/h
+  success_max_speed_kph: 30
+
+rain_speed:
+  factor: 0.80                          # [LAW-KR] Enforcement Rule art.19: wet road -> 20 % below limit
+  heavy_factor: 0.50                    # heavy rain / snow / fog -> 50 %
+  success_min_fraction: 0.90
+  window_s: 60
+
+speed_bump:
+  max_speed_kph: 30                     # [TEAM] Korean speed-hump design speed 30 km/h
+  check_window_m: 20
+
+railroad_stop:
+  stop_within_m: 50                     # [LAW-KR] Road Traffic Act art.24: stop before railroad crossing
+  stop_speed_kph: 1.0
+
+caution_slowdown:
+  types: [5, 6, 8, 9, 11, 12]           # OFFICIAL CautionPointType: accident-prone, fog, wildlife, downhill, narrow road, slippery
+                                        # (sharp curve is NOT in the API; kept only in the simulator's ground truth)
+  min_speed_reduction_frac: 0.10
+  ref_window_m: [400, 200]              # reference speed measured 400-200 m before the point
+  check_window_m: [50, -50]
+
+right_turn_pause:
+  max_speed_kph: 5                      # [LAW-KR] 2023 right-turn pause; success-only (signal colour unknown)
+  window_m: [40, 0]
+
+blinker_cancel:
+  max_linger_s: 8                       # [TEAM]
+
+headlights:
+  require_when: [night, wiper]          # [LAW-KR] art.37 lights at night / rain / fog
+
+following_margin:                       # proxy for headway: no forward-collision warning
+  block_km: 10
+  max_fca: 0
+
+lane_keeping:
+  block_km: 10
+  max_lka: 0
+
+seat_belts:
+  check_at_speed_kph: 10                # [LAW-KR] all-seat belt duty (2018)
+
+rest_breaks:
+  max_continuous_drive_min: 120         # Korea Expressway Corp. guidance
+  min_break_min: 10
+
+steady_cruise:
+  min_speed_kph: 60
+  window_s: 60
+  max_speed_std_kph: 3.0                # [TEAM]
+
+hazard_warning:                         # Korean courtesy/safety practice on expressway queue tail
+  min_entry_speed_kph: 70
+  min_drop_kph: 30
+  within_s: 6
+
+risk_monitors:                          # internal only — never shown to the user
+  hard_brake_g: 0.30                    # [TESLA][PROG]
+  severe_brake_g: 0.45                  # [NICHD]
+  hard_accel_g: 0.30
+  severe_accel_g: 0.35                  # [NICHD]
+  hard_lat_g: 0.40                      # [TESLA]
+  severe_lat_g: 0.50                    # [NICHD]
+  speeding_frac: 0.10
+  severe_speeding_frac: 0.20            # team plan: >20 % over -> trip earns no XP/points
+
+release:                                # a habit is shown to drivers only after it passes the release gate
+  min_sim_precision: 0.97               # held-out simulation, dual-key
+  max_field_dispute_rate: 0.02          # "아니에요" taps per praise after launch
+  not_released:                         # logged internally, never shown, until fixed / confirmed
+    - anticipatory_braking              # sim precision 0.76 (Nov 2026 run)
+    - following_margin                  # OFFICIAL: telltales need PRIVATE_CAR_SAFETY (signature|privileged) -> not readable
+    - lane_keeping                      # same (lka telltale)
+    - fca_reaction                      # same (fca telltale)
+    - hazard_warning                    # OFFICIAL: TurnSignalValue has no hazard state (OFF/RIGHT/LEFT) -> not observable
+    - smooth_stop                       # rules-only 71-93 % under realistic Pleos data (v2 audit, cut-ins without a visible
+                                        # FCA warning). Release when the retrained gate's stress test shows >= 97 % in every condition
+    - steady_cruise                     # stress test 2026-11-06: 85-96 % in 16 of 26 conditions. False praises are windows where the
+                                        # car got an FCA warning (lead-car interaction) that third-party apps cannot see. Held until
+                                        # a gate covers it or Pleos exposes the telltale
+
+# Per-car calibration memory. The app stores what the engine learned on earlier trips (steering sign from
+# heading / navigation turns, steering-ratio scale). 0 / null = unknown -> engine calibrates or abstains.
+vehicle:
+  steer_sign: -1                        # OFFICIAL (SteeringWheel API): leftward angles are negative -> x(-1) = left-positive.
+                                        # Data calibration (heading / navigation turns) still checks and overrides it.
+  steer_unit: auto                      # OFFICIAL: front-wheel angle (road_wheel). auto also handles the emulator's +-540 slider
+  ratio_scale: null

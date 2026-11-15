@@ -1,0 +1,20 @@
+{
+ "name": "rainy_evening",
+ "title": "비 오는 저녁 · 스쿨존",
+ "data_version": 3,
+ "hz": 10,
+ "duration_s": 746.7,
+ "seed": 157,
+ "places": [
+  [
+   0.0,
+   "출발지"
+  ],
+  [
+   176.4,
+   "과속방지턱 구간"
+  ]
+ ],
+ "rain": true,
+ "night": false
+}

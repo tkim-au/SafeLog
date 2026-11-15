@@ -1,0 +1,174 @@
+{
+ "general": {
+  "base_hz": 10,
+  "min_sample_hz_for_kinematics": 1.0,
+  "min_sample_hz_for_jerk": 5.0,
+  "max_signal_age_s": 1.5,
+  "min_opportunities_to_report": 3,
+  "min_trip_s": 30,
+  "external_forcing_lookback_s": 3.0,
+  "adas_exclusion": true,
+  "guard_kin_g": 0.02,
+  "guard_kin_g_lowrate": 0.04,
+  "guard_lead_s": 0.5,
+  "guard_lead_m": 5,
+  "guard_speed_kph": 1.0,
+  "guard_speed_frac": 0.01,
+  "steering_ratio_uncertainty": 0.12,
+  "guard_frac": 0.0
+ },
+ "smooth_stop": {
+  "min_entry_speed_kph": 30,
+  "success_max_decel_g": 0.3,
+  "excellent_max_decel_g": 0.2,
+  "stop_speed_kph": 1.0
+ },
+ "smooth_launch": {
+  "start_max_speed_kph": 1.0,
+  "end_speed_kph": 20,
+  "window_s": 15,
+  "success_max_accel_g": 0.3,
+  "excellent_max_accel_g": 0.2
+ },
+ "anticipatory_braking": {
+  "min_entry_speed_kph": 40,
+  "min_coast_before_brake_s": 2.0,
+  "max_peak_decel_g": 0.25
+ },
+ "turn_signal_turn": {
+  "urban_min_lead_m": 30,
+  "expressway_min_lead_m": 100,
+  "approach_window_m": 300
+ },
+ "lane_change_signal": {
+  "min_speed_kph": 40,
+  "min_lead_s": 3.0,
+  "no_tbt_within_m": 500,
+  "min_lateral_offset_m": 2.5,
+  "max_duration_s": 10.0,
+  "min_duration_s": 2.0,
+  "max_net_heading_change_deg": 6.0
+ },
+ "smooth_lane_change": {
+  "min_duration_s": 3.0,
+  "max_lat_accel_g": 0.2
+ },
+ "smooth_turn": {
+  "success_max_lat_g": 0.3,
+  "excellent_max_lat_g": 0.25
+ },
+ "speed_limit": {
+  "window_s": 60,
+  "tolerance_kph": 0,
+  "success_min_fraction": 0.95,
+  "sustain_s_for_risk": 10
+ },
+ "school_zone": {
+  "limit_kph": 30,
+  "success_max_speed_kph": 30
+ },
+ "rain_speed": {
+  "factor": 0.8,
+  "heavy_factor": 0.5,
+  "success_min_fraction": 0.9,
+  "window_s": 60
+ },
+ "speed_bump": {
+  "max_speed_kph": 30,
+  "check_window_m": 20
+ },
+ "railroad_stop": {
+  "stop_within_m": 50,
+  "stop_speed_kph": 1.0
+ },
+ "caution_slowdown": {
+  "types": [
+   5,
+   6,
+   8,
+   9,
+   11,
+   12
+  ],
+  "min_speed_reduction_frac": 0.1,
+  "ref_window_m": [
+   400,
+   200
+  ],
+  "check_window_m": [
+   50,
+   -50
+  ]
+ },
+ "right_turn_pause": {
+  "max_speed_kph": 5,
+  "window_m": [
+   40,
+   0
+  ]
+ },
+ "blinker_cancel": {
+  "max_linger_s": 8
+ },
+ "headlights": {
+  "require_when": [
+   "night",
+   "wiper"
+  ]
+ },
+ "following_margin": {
+  "block_km": 10,
+  "max_fca": 0
+ },
+ "lane_keeping": {
+  "block_km": 10,
+  "max_lka": 0
+ },
+ "seat_belts": {
+  "check_at_speed_kph": 10
+ },
+ "rest_breaks": {
+  "max_continuous_drive_min": 120,
+  "min_break_min": 10
+ },
+ "steady_cruise": {
+  "min_speed_kph": 60,
+  "window_s": 60,
+  "max_speed_std_kph": 3.0
+ },
+ "hazard_warning": {
+  "min_entry_speed_kph": 70,
+  "min_drop_kph": 30,
+  "within_s": 6
+ },
+ "risk_monitors": {
+  "hard_brake_g": 0.3,
+  "severe_brake_g": 0.45,
+  "hard_accel_g": 0.3,
+  "severe_accel_g": 0.35,
+  "hard_lat_g": 0.4,
+  "severe_lat_g": 0.5,
+  "speeding_frac": 0.1,
+  "severe_speeding_frac": 0.2
+ },
+ "release": {
+  "min_sim_precision": 0.97,
+  "max_field_dispute_rate": 0.02,
+  "not_released": [
+   "anticipatory_braking",
+   "following_margin",
+   "lane_keeping",
+   "fca_reaction",
+   "hazard_warning",
+   "smooth_stop",
+   "steady_cruise"
+  ]
+ },
+ "vehicle": {
+  "steer_sign": -1,
+  "steer_unit": "auto",
+  "ratio_scale": null
+ },
+ "data_version": 3,
+ "source": "scoring_engine/config/thresholds.yaml"
+}

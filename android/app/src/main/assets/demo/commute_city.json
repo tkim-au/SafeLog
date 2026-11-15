@@ -1,0 +1,24 @@
+{
+ "name": "commute_city",
+ "title": "출근길 · 시내 10분",
+ "data_version": 3,
+ "hz": 10,
+ "duration_s": 581.3,
+ "seed": 124,
+ "places": [
+  [
+   0.0,
+   "출발지"
+  ],
+  [
+   170.9,
+   "과속방지턱 구간"
+  ],
+  [
+   520.9,
+   "과속방지턱 구간"
+  ]
+ ],
+ "rain": false,
+ "night": false
+}

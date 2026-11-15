@@ -1,0 +1,446 @@
+{
+  "missions": [
+    {
+      "id": "lane-signal",
+      "habit": "lane_change_signal",
+      "title": "차선 바꾸기 3초 전 깜빡이",
+      "kind": "Signal",
+      "minChances": 2,
+      "minRate": 0.8,
+      "points": 10,
+      "rainOnly": false
+    },
+    {
+      "id": "turn-signal",
+      "habit": "turn_signal_turn",
+      "title": "회전 30m 전 깜빡이",
+      "kind": "Signal",
+      "minChances": 2,
+      "minRate": 0.8,
+      "points": 10,
+      "rainOnly": false
+    },
+    {
+      "id": "soft-launch",
+      "habit": "smooth_launch",
+      "title": "부드럽게 출발하기",
+      "kind": "Brake",
+      "minChances": 3,
+      "minRate": 0.8,
+      "points": 10,
+      "rainOnly": false
+    },
+    {
+      "id": "school-zone",
+      "habit": "school_zone",
+      "title": "스쿨존 시속 30km",
+      "kind": "Speed",
+      "minChances": 1,
+      "minRate": 1,
+      "points": 10,
+      "rainOnly": false
+    },
+    {
+      "id": "speed-limit",
+      "habit": "speed_limit",
+      "title": "제한속도 지키기",
+      "kind": "Speed",
+      "minChances": 3,
+      "minRate": 0.8,
+      "points": 10,
+      "rainOnly": false
+    },
+    {
+      "id": "rain-slow",
+      "habit": "rain_speed",
+      "title": "비 오는 날 20% 천천히",
+      "kind": "Speed",
+      "minChances": 2,
+      "minRate": 0.8,
+      "points": 10,
+      "rainOnly": true
+    }
+  ],
+  "shop": [
+    {
+      "id": "bluemembers",
+      "name": "블루멤버스 포인트 전환",
+      "brand": "블루멤버스",
+      "category": "Car",
+      "price": 1000,
+      "art": "1,000P",
+      "image": null
+    },
+    {
+      "id": "bluehands",
+      "name": "무상 점검 쿠폰",
+      "brand": "블루핸즈",
+      "category": "Car",
+      "price": 3000,
+      "art": "점검",
+      "image": null
+    },
+    {
+      "id": "epit",
+      "name": "충전 크레딧 5kWh",
+      "brand": "E-pit",
+      "category": "Car",
+      "price": 1500,
+      "art": "5kWh",
+      "image": null
+    },
+    {
+      "id": "coffee",
+      "name": "아메리카노 쿠폰",
+      "brand": "편의점 커피",
+      "category": "Life",
+      "price": 1643,
+      "art": "COFFEE",
+      "image": "reward_coffee"
+    },
+    {
+      "id": "mart10",
+      "name": "마트 10% 할인권",
+      "brand": "마트",
+      "category": "Life",
+      "price": 800,
+      "art": "10%",
+      "image": null
+    },
+    {
+      "id": "store5",
+      "name": "편의점 5% 할인권",
+      "brand": "편의점",
+      "category": "Life",
+      "price": 400,
+      "art": "5%",
+      "image": null
+    },
+    {
+      "id": "culture",
+      "name": "문화상품권 5천원",
+      "brand": "문화상품권",
+      "category": "Culture",
+      "price": 5000,
+      "art": "5,000원",
+      "image": null
+    },
+    {
+      "id": "coin",
+      "name": "게임 코인 100개",
+      "brand": "게임",
+      "category": "Culture",
+      "price": 1200,
+      "art": "100",
+      "image": null
+    },
+    {
+      "id": "raincoat",
+      "name": "캐릭터 우비",
+      "brand": "캐릭터",
+      "category": "Atlas",
+      "price": 600,
+      "art": "우비",
+      "image": "atlas_cheer"
+    },
+    {
+      "id": "busan-voice",
+      "name": "부산 사투리 목소리",
+      "brand": "캐릭터",
+      "category": "Atlas",
+      "price": 900,
+      "art": "목소리",
+      "image": "atlas_joy"
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q-roundabout",
+      "question": "회전교차로에 들어갈 때 누가 먼저 갈까요?",
+      "choices": [
+        "들어가려는 차",
+        "이미 돌고 있는 차",
+        "오른쪽에 있는 차"
+      ],
+      "answer": 1,
+      "explanation": "들어가는 차가 양보해요. 나갈 때 오른쪽 깜빡이를 켜요.",
+      "tags": [
+        "turn"
+      ],
+      "tip": "회전교차로는 들어가는 차가 양보해요"
+    },
+    {
+      "id": "q-rain",
+      "question": "비 오는 날 젖은 길에서는 제한속도보다 얼마나 줄일까요?",
+      "choices": [
+        "10%",
+        "20%",
+        "줄이지 않아도 돼요"
+      ],
+      "answer": 1,
+      "explanation": "노면이 젖으면 20% 줄여요. 폭우·안개·눈길은 50%예요.",
+      "tags": [
+        "rain"
+      ],
+      "tip": "비 오는 날은 제한속도의 80%로 달려요"
+    },
+    {
+      "id": "q-signal30",
+      "question": "회전할 때 깜빡이는 언제부터 켤까요?",
+      "choices": [
+        "회전 지점 10m 전",
+        "회전 지점 30m 전",
+        "돌기 시작할 때"
+      ],
+      "answer": 1,
+      "explanation": "시내에서는 30m 전, 고속도로에서는 100m 전부터 켜요.",
+      "tags": [
+        "turn"
+      ],
+      "tip": "회전 30m 전부터 깜빡이를 켜요"
+    },
+    {
+      "id": "q-lane3s",
+      "question": "차선을 바꿀 때 깜빡이는 몇 초 전에 켜면 좋을까요?",
+      "choices": [
+        "바꾸면서",
+        "1초 전",
+        "3초 전"
+      ],
+      "answer": 2,
+      "explanation": "3초 전에 켜면 뒤차가 알아채고 속도를 맞출 시간이 생겨요.",
+      "tags": [
+        "lane"
+      ],
+      "tip": "차선 바꾸기 3초 전에 깜빡이"
+    },
+    {
+      "id": "q-school",
+      "question": "어린이보호구역의 제한속도는?",
+      "choices": [
+        "시속 30km",
+        "시속 40km",
+        "시속 50km"
+      ],
+      "answer": 0,
+      "explanation": "어린이보호구역은 시속 30km예요. 횡단보도 앞에서는 꼭 멈춰요.",
+      "tags": [
+        "school"
+      ],
+      "tip": "스쿨존은 사람이 없어도 천천히"
+    },
+    {
+      "id": "q-rightturn",
+      "question": "빨간불일 때 우회전하려면?",
+      "choices": [
+        "천천히 바로 돈다",
+        "멈췄다가 보행자를 보고 돈다",
+        "경적을 울리고 돈다"
+      ],
+      "answer": 1,
+      "explanation": "빨간불 우회전은 일단 멈춘 뒤 보행자가 없을 때 천천히 돌아요.",
+      "tags": [
+        "turn"
+      ],
+      "tip": "우회전 전에는 한 번 멈춰요"
+    },
+    {
+      "id": "q-yellow",
+      "question": "노란불이 켜지면?",
+      "choices": [
+        "서둘러 지나간다",
+        "멈출 수 있으면 멈춘다",
+        "속도를 유지한다"
+      ],
+      "answer": 1,
+      "explanation": "노란불은 '서두르라'가 아니라 '멈춤'이에요. 이미 교차로에 들어갔다면 빠져나가요.",
+      "tags": [
+        "general"
+      ],
+      "tip": "노란불은 '멈춤'이에요"
+    },
+    {
+      "id": "q-railroad",
+      "question": "철길 건널목 앞에서는?",
+      "choices": [
+        "천천히 지나간다",
+        "일시정지 후 안전을 확인한다",
+        "경보가 없으면 그냥 간다"
+      ],
+      "answer": 1,
+      "explanation": "철길 앞에서는 모든 차가 멈춰서 좌우를 확인해요.",
+      "tags": [
+        "railroad"
+      ],
+      "tip": "철길 앞에서는 꼭 멈춰요"
+    },
+    {
+      "id": "q-belt",
+      "question": "안전벨트는 어느 자리에서 매야 할까요?",
+      "choices": [
+        "앞자리만",
+        "모든 자리",
+        "고속도로에서만"
+      ],
+      "answer": 1,
+      "explanation": "2018년부터 모든 도로에서 모든 좌석이 안전벨트를 매야 해요.",
+      "tags": [
+        "general"
+      ],
+      "tip": "출발 전 모두 안전벨트"
+    },
+    {
+      "id": "q-rest",
+      "question": "장거리 운전은 얼마마다 쉬면 좋을까요?",
+      "choices": [
+        "4시간",
+        "2시간",
+        "쉬지 않아도 돼요"
+      ],
+      "answer": 1,
+      "explanation": "2시간마다 10분 이상 쉬면 졸음운전을 줄일 수 있어요.",
+      "tags": [
+        "long"
+      ],
+      "tip": "2시간마다 쉬어 가요"
+    },
+    {
+      "id": "q-headway",
+      "question": "앞차와의 안전거리를 쉽게 재는 방법은?",
+      "choices": [
+        "앞차 번호판이 보이면 충분",
+        "표지판을 지난 뒤 4초 세기",
+        "1초 세기"
+      ],
+      "answer": 1,
+      "explanation": "앞차가 지나간 표지판을 4초 세고 지나가면 안전거리예요.",
+      "tags": [
+        "general"
+      ],
+      "tip": "앞차가 지나간 표지판에서 4초 세기"
+    },
+    {
+      "id": "q-lights",
+      "question": "비가 와서 어두울 때 전조등은?",
+      "choices": [
+        "켜지 않아도 된다",
+        "켠다",
+        "안개등만 켠다"
+      ],
+      "answer": 1,
+      "explanation": "밤과 비·안개·눈이 올 때는 전조등을 켜요. 주간주행등만으로는 뒤가 어두워요.",
+      "tags": [
+        "night",
+        "rain"
+      ],
+      "tip": "비 오는 날은 전조등을 켜요"
+    }
+  ],
+  "tiers": {
+    "smooth_stop": "A",
+    "speed_limit": "A",
+    "school_zone": "A",
+    "following_margin": "A",
+    "rain_speed": "A",
+    "turn_signal_turn": "B",
+    "lane_change_signal": "B",
+    "seat_belts": "B",
+    "railroad_stop": "B",
+    "headlights": "B",
+    "smooth_turn": "B",
+    "lane_keeping": "B",
+    "rest_breaks": "B",
+    "smooth_launch": "C",
+    "anticipatory_braking": "C",
+    "smooth_lane_change": "C",
+    "speed_bump": "C",
+    "caution_slowdown": "C",
+    "steady_cruise": "C",
+    "blinker_cancel": "C",
+    "right_turn_pause": "X",
+    "hazard_warning": "X",
+    "fca_reaction": "X"
+  },
+  "tierWeight": {
+    "A": 3,
+    "B": 2,
+    "C": 1,
+    "X": 0
+  },
+  "labels": {
+    "smooth_stop": "부드러운 정지",
+    "smooth_launch": "부드러운 출발",
+    "anticipatory_braking": "미리 감속",
+    "turn_signal_turn": "회전 전 깜빡이",
+    "smooth_turn": "부드러운 회전",
+    "right_turn_pause": "우회전 전 멈춤",
+    "lane_change_signal": "차선 변경 3초 전 깜빡이",
+    "smooth_lane_change": "부드러운 차선 변경",
+    "school_zone": "스쿨존 30km/h",
+    "speed_bump": "과속방지턱 서행",
+    "railroad_stop": "철길 앞 일시정지",
+    "caution_slowdown": "주의 구간 감속",
+    "hazard_warning": "비상등으로 뒤차 배려",
+    "fca_reaction": "위기 대응",
+    "speed_limit": "제한속도 지키기",
+    "rain_speed": "빗길 20% 감속",
+    "headlights": "전조등 켜기",
+    "following_margin": "여유 있는 차간거리",
+    "lane_keeping": "차로 안정 유지",
+    "seat_belts": "모두 안전벨트",
+    "rest_breaks": "2시간마다 휴식",
+    "steady_cruise": "일정한 속도 유지",
+    "blinker_cancel": "깜빡이 정리"
+  },
+  "rules": {
+    "monthlyCap": 3000,
+    "attendFirstMonth": 10,
+    "attendLater": 3,
+    "firstMonthDays": 30,
+    "weekDays": 3,
+    "weekBonus": 30,
+    "streak4": 100,
+    "streak8": 200,
+    "stampEvery": 5,
+    "stampBonus": 50,
+    "quizRight": 5,
+    "quizWrong": 2,
+    "missionXp": 10,
+    "insuranceGoalKm": 1000,
+    "insuranceMaxDiscount": 10,
+    "trainingOnAvg": 70,
+    "trainingOnTrip": 60,
+    "trainingOffAvg": 75,
+    "trainingOffStreak": 3,
+    "scoreWindow": 5,
+    "graduationXp": 200,
+    "graduationPoints": 300,
+    "tourXp": 50,
+    "grades": [
+      {
+        "name": "Basic",
+        "label": "기본",
+        "discount": 0,
+        "fromKm": 0
+      },
+      {
+        "name": "Silver",
+        "label": "실버",
+        "discount": 5,
+        "fromKm": 1000
+      },
+      {
+        "name": "Gold",
+        "label": "골드",
+        "discount": 10,
+        "fromKm": 5000
+      },
+      {
+        "name": "Platinum",
+        "label": "플래티넘",
+        "discount": 15,
+        "fromKm": 15000
+      }
+    ]
+  }
+}

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>세이프로그 · 실시간 학습 2D 뷰</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='5' y='2' width='6' height='12' rx='2' fill='%232f7df6'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0f1216; --panel: #161b21; --line: #262d36; --ink: #e8edf2; --muted: #8a96a3;
+    --ok: #3ccf7a; --false: #ff5d5d; --good: #4aa3ff; --lost: #ffab3d; --grey: #6b7683;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+    font: 14px/1.45 "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; }
+  #app { display: grid; grid-template-columns: 1fr 380px; grid-template-rows: 1fr 64px; height: 100vh; }
+  #stage { position: relative; grid-row: 1; grid-column: 1; overflow: hidden; }
+  #view { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #mini { position: absolute; left: 14px; top: 14px; width: 240px; height: 170px; background: rgba(15,18,22,.78);
+    border: 1px solid var(--line); border-radius: 10px; }
+  #hud { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 12px; align-items: flex-end; }
+  .card { background: rgba(15,18,22,.82); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  #speed { font-size: 44px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  #speed small { font-size: 14px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+  #limit { width: 54px; height: 54px; border-radius: 50%; border: 6px solid #e33; background: #fff; color: #111;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; }
+  #limit.none { opacity: .25; }
+  .ind { display: flex; gap: 10px; font-size: 26px; }
+  .ind span { opacity: .18; transition: opacity .1s; }
+  .ind span.on { opacity: 1; }
+  #arrowL.on, #arrowR.on { color: #ffb02e; }
+  #brakeI.on { color: #ff4848; }
+  #wiperI.on { color: #7cc4ff; }
+  #meta { position: absolute; right: 14px; top: 14px; text-align: right; max-width: 52%; }
+  .chip { display: inline-block; padding: 3px 9px; border-radius: 999px; background: #222a33; color: var(--ink); margin: 2px 0 2px 4px; font-size: 12px; }
+  .chip.warn { background: #3b2a12; color: #ffc46b; }
+  #popups { position: absolute; left: 50%; top: 18%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; }
+  .pop { padding: 7px 14px; border-radius: 999px; font-weight: 700; color: #08110b; box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    animation: rise 2.6s ease-out forwards; white-space: nowrap; }
+  @keyframes rise { 0% { opacity: 0; transform: translateY(12px) scale(.9); } 12% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-16px); } }
+  #loading { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(15,18,22,.55);
+    font-size: 18px; color: var(--muted); }
+  #loading.on { display: flex; }
+  #side { grid-row: 1 / span 2; grid-column: 2; background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+  #side section { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  #side h2 { margin: 0 0 8px; font-size: 13px; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  .big { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .row { display: flex; justify-content: space-between; gap: 8px; margin: 3px 0; }
+  .row b { font-variant-numeric: tabular-nums; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--grey); margin-right: 6px; vertical-align: 1px; }
+  .dot.live { background: var(--ok); box-shadow: 0 0 0 0 rgba(60,207,122,.6); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(60,207,122,.6); } 70% { box-shadow: 0 0 0 9px rgba(60,207,122,0); } 100% { box-shadow: 0 0 0 0 rgba(60,207,122,0); } }
+  #chart { width: 100%; height: 150px; display: block; }
+  #events { flex: 1; overflow: auto; padding: 8px 16px 16px; }
+  .ev { display: grid; grid-template-columns: 52px 12px 1fr; gap: 8px; align-items: baseline; padding: 5px 0; border-bottom: 1px dashed #222a33; cursor: pointer; }
+  .ev .tm { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+  .ev .sw { width: 10px; height: 10px; border-radius: 3px; }
+  .ev .tx small { color: var(--muted); }
+  #log { font: 11px/1.4 ui-monospace, Consolas, monospace; color: var(--muted); white-space: pre-wrap; max-height: 120px; overflow: auto; }
+  #bar { grid-row: 2; grid-column: 1; display: flex; align-items: center; gap: 10px; padding: 0 14px; background: var(--panel); border-top: 1px solid var(--line); }
+  button { background: #222a33; color: var(--ink); border: 1px solid #2f3843; border-radius: 9px; padding: 8px 12px; font: inherit; cursor: pointer; }
+  button:hover { background: #2a333e; }
+  button.primary { background: #2563eb; border-color: #2563eb; }
+  #timeline { flex: 1; height: 36px; position: relative; cursor: pointer; }
+  #timeline canvas { width: 100%; height: 100%; display: block; }
+  #clock { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 108px; text-align: right; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--muted); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  #err { color: var(--false); font-size: 12px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="view"></canvas>
+    <canvas id="mini"></canvas>
+    <div id="meta"></div>
+    <div id="popups"></div>
+    <div id="hud">
+      <div class="card"><div id="speed">0<small>km/h</small></div></div>
+      <div class="card" style="padding:8px"><div id="limit" class="none">–</div></div>
+      <div class="card ind"><span id="arrowL">◀</span><span id="brakeI">●</span><span id="wiperI">☂</span><span id="arrowR">▶</span></div>
+    </div>
+    <div id="loading">다음 주행을 시뮬레이션하는 중…</div>
+  </div>
+
+  <div id="bar">
+    <button id="play" class="primary">⏸ 일시정지</button>
+    <button id="speedBtn">×4</button>
+    <button id="next">다음 주행 ▶▶</button>
+    <label style="color:var(--muted);font-size:12px"><input type="checkbox" id="auto" checked> 끝나면 자동으로</label>
+    <div id="timeline"><canvas id="tl"></canvas></div>
+    <div id="clock">00:00 / 00:00</div>
+  </div>
+
+  <aside id="side">
+    <section>
+      <h2><span id="liveDot" class="dot"></span>논스톱 학습</h2>
+      <div class="row"><span>라운드</span><b class="big" id="round">–</b></div>
+      <div class="row"><span>챔피언 교체</span><b id="promos">–</b></div>
+      <div class="row"><span>상태</span><b id="alive">–</b></div>
+    </section>
+    <section>
+      <h2>챔피언 게이트 (홀드아웃 600주행)</h2>
+      <div class="row"><span>칭찬 정확도</span><b id="cPrec">–</b></div>
+      <div class="row"><span>규칙만</span><b id="rPrec">–</b></div>
+      <div class="row"><span>맞는 칭찬 유지</span><b id="cKept">–</b></div>
+      <div class="row"><span>챔피언이 된 라운드</span><b id="cRound">–</b></div>
+      <canvas id="chart"></canvas>
+      <div class="legend"><span><i style="background:#9aa5b1"></i>도전자</span><span><i style="background:var(--ok)"></i>챔피언</span><span><i style="background:#ff7a7a"></i>규칙만</span><span><i style="background:#ffd166"></i>교체</span></div>
+    </section>
+    <section>
+      <h2>이 주행의 판정</h2>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i>칭찬(맞음)</span><span><i style="background:var(--false)"></i>잘못된 칭찬</span>
+        <span><i style="background:var(--good)"></i>게이트가 막음(잘함)</span><span><i style="background:var(--lost)"></i>게이트가 막음(아까움)</span>
+        <span><i style="background:var(--grey)"></i>내부 기록·보류 (앱에 안 보임)</span>
+      </div>
+      <div id="tally" style="margin-top:8px;color:var(--muted);font-size:12px"></div>
+    </section>
+    <div id="events"></div>
+    <section style="border-top:1px solid var(--line);border-bottom:0">
+      <h2>학습 로그</h2>
+      <div id="log"></div>
+      <div id="err"></div>
+    </section>
+  </aside>
+</div>
+
+<script>
+"use strict";
+const COLORS = { praise_ok: "#3ccf7a", praise_false: "#ff5d5d", blocked_good: "#4aa3ff", blocked_lost: "#ffab3d", held: "#6b7683", miss: "#6b7683" };
+const CAT_TEXT = { praise_ok: "칭찬", praise_false: "잘못된 칭찬", blocked_good: "게이트가 막음 ✓", blocked_lost: "게이트가 막음 (아까움)", held: "보류(출시 전)", miss: "내부 기록" };
+const SPEEDS = [1, 4, 16, 64];
+const $ = (id) => document.getElementById(id);
+
+let T = null;            // current trip
+let head = 0;            // playhead (sample index, float)
+let playing = true, speedIdx = 1, lastTs = null, shownUpTo = -1, loading = false;
+let status = null, nextK = Number(new URLSearchParams(location.search).get("k") || 0);
+
+// ---------------------------------------------------------------------------------- data
+async function getJSON(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  const j = await r.json();
+  if (!r.ok || j.error) throw new Error(j.error || r.statusText);
+  return j;
+}
+
+async function refreshStatus() {
+  try {
+    status = await getJSON("/api/status");
+    renderStatus();
+  } catch (e) { $("err").textContent = "상태: " + e.message; }
+}
+
+async function loadTrip() {
+  if (loading) return;
+  loading = true; $("loading").classList.add("on");
+  try {
+    const r = (status && status.round) || 1;
+    const t = await getJSON(`/api/trip?round=${r}&k=${nextK}&minutes=15`);
+    nextK = (nextK + 1) % 400;
+    t.judgments.sort((a, b) => a.i - b.i);
+    t.limitSigns = [];
+    const lim = t.samples.lim;
+    for (let i = 1; i < lim.length; i++) if (lim[i] != null && lim[i] !== lim[i - 1]) t.limitSigns.push(i);
+    if (lim[0] != null) t.limitSigns.unshift(0);
+    T = t; head = 0; shownUpTo = -1;
+    $("events").innerHTML = ""; $("popups").innerHTML = "";
+    renderMeta(); drawMiniBase(); drawTimeline(); $("err").textContent = "";
+  } catch (e) {
+    $("err").textContent = "주행: " + e.message;
+  } finally { loading = false; $("loading").classList.remove("on"); }
+}
+
+// ---------------------------------------------------------------------------------- side panel
+const pct = (x) => x == null ? "–" : (x * 100).toFixed(2) + "%";
+function renderStatus() {
+  const s = status;
+  $("round").textContent = s.round ?? "–";
+  $("promos").textContent = s.promotions ?? "–";
+  $("alive").textContent = s.stop ? "멈추는 중 (STOP 파일)" : s.alive ? "학습 중" : "멈춤 (15분 넘게 기록 없음)";
+  $("liveDot").className = "dot" + (s.alive ? " live" : "");
+  const c = s.champion || {};
+  $("cPrec").textContent = pct(c.precision); $("rPrec").textContent = pct(c.rulePrecision); $("cKept").textContent = pct(c.kept);
+  $("cRound").textContent = c.round ?? "–";
+  $("log").textContent = (s.log || []).slice(-10).join("\n");
+  if (c.error) $("err").textContent = "게이트: " + c.error;
+  drawChart(s.history || []);
+}
+
+function drawChart(h) {
+  const cv = $("chart"), dpr = devicePixelRatio || 1;
+  const w = cv.clientWidth, ht = cv.clientHeight;
+  cv.width = w * dpr; cv.height = ht * dpr;
+  const g = cv.getContext("2d"); g.scale(dpr, dpr); g.clearRect(0, 0, w, ht);
+  const rows = h.filter(r => r.round != null);
+  if (!rows.length) { g.fillStyle = "#8a96a3"; g.fillText("아직 기록 없음", 8, 20); return; }
+  const vals = rows.flatMap(r => [r.chPrec, r.cpPrec, r.rule]).filter(v => v != null && isFinite(v));
+  let lo = Math.min(...vals), hi = Math.max(...vals); if (hi - lo < 0.01) { lo -= 0.005; hi += 0.005; }
+  const X = (k) => 34 + (w - 42) * (rows.length === 1 ? 1 : k / (rows.length - 1));
+  const Y = (v) => 8 + (ht - 26) * (1 - (v - lo) / (hi - lo));
+  g.strokeStyle = "#262d36"; g.fillStyle = "#8a96a3"; g.font = "10px sans-serif";
+  for (let k = 0; k <= 3; k++) { const v = lo + (hi - lo) * k / 3; g.beginPath(); g.moveTo(34, Y(v)); g.lineTo(w - 6, Y(v)); g.stroke(); g.fillText((v * 100).toFixed(1), 2, Y(v) + 3); }
+  const line = (key, col, wdt) => { g.strokeStyle = col; g.lineWidth = wdt; g.beginPath(); let st = false;
+    rows.forEach((r, k) => { const v = r[key]; if (v == null || !isFinite(v)) return; st ? g.lineTo(X(k), Y(v)) : g.moveTo(X(k), Y(v)); st = true; }); g.stroke(); };
+  line("rule", "#ff7a7a", 1); line("cpPrec", "#3ccf7a", 2);
+  g.fillStyle = "#9aa5b1"; rows.forEach((r, k) => { if (r.chPrec != null && isFinite(r.chPrec)) g.fillRect(X(k) - 1, Y(r.chPrec) - 1, 2, 2); });
+  g.fillStyle = "#ffd166"; rows.forEach((r, k) => { if (r.promoted && r.cpPrec != null) { g.beginPath(); g.arc(X(k), Y(r.cpPrec), 3.5, 0, 7); g.fill(); } });
+  g.fillStyle = "#8a96a3"; g.fillText(`라운드 ${rows[0].round} → ${rows[rows.length - 1].round}`, 36, ht - 4);
+}
+
+function renderMeta() {
+  const p = T.profile || {}, r = T.route || {};
+  const chips = [];
+  chips.push(`<span class="chip">라운드 ${T.round} · 시드 ${T.seed}</span>`);
+  chips.push(`<span class="chip">${({ aggressive: "거친 운전", drowsy: "졸음", careful: "조심", novice: "초보", normal: "보통" })[T.archetype] || T.archetype || "보통 운전"}</span>`);
+  if (r.kind) chips.push(`<span class="chip">${({ urban: "시내", rural: "국도", mixed: "섞인 길", long: "장거리" })[r.kind] || r.kind}</span>`);
+  if (r.rain || r.heavy_rain) chips.push(`<span class="chip warn">${r.heavy_rain ? "폭우" : "비"}</span>`);
+  if (r.night) chips.push(`<span class="chip warn">밤</span>`);
+  if (r.extra_forced_per_km) chips.push(`<span class="chip warn">끼어들기 많음</span>`);
+  if (p.speed_hz) chips.push(`<span class="chip warn">속도 ${p.speed_hz}Hz</span>`);
+  if (p.dropouts) chips.push(`<span class="chip warn">신호 끊김</span>`);
+  if (p.p_heading != null) chips.push(`<span class="chip warn">방위 일부 없음</span>`);
+  if (p.p_nav != null) chips.push(`<span class="chip warn">내비 일부 없음</span>`);
+  if (p.steer_noise) chips.push(`<span class="chip warn">조향 잡음</span>`);
+  chips.push(`<span class="chip">${T.minutes}분 / 전체 ${T.fullMinutes}분 · ${T.km}km · 계산 ${T.computeS}s</span>`);
+  $("meta").innerHTML = chips.join("");
+  const tally = {}; T.judgments.forEach(j => tally[j.cat] = (tally[j.cat] || 0) + 1);
+  $("tally").textContent = Object.entries(tally).map(([k, v]) => `${CAT_TEXT[k]} ${v}`).join(" · ") || "판정 없음";
+}
+
+// ---------------------------------------------------------------------------------- geometry
+const S = () => T.samples;
+function lerp(a, b, f) { return a + (b - a) * f; }
+function lerpAng(a, b, f) { let d = ((b - a + 540) % 360) - 180; return a + d * f; }
+function at(i) {
+  const s = S(), n = s.x.length, k = Math.max(0, Math.min(n - 1, Math.floor(i))), k2 = Math.min(n - 1, k + 1), f = i - k;
+  return { x: lerp(s.x[k], s.x[k2], f), y: lerp(s.y[k], s.y[k2], f), h: lerpAng(s.h[k], s.h[k2], f), v: lerp(s.v[k], s.v[k2], f), k };
+}
+// a point beside the road centre: o metres to the right of sample k
+function side(k, o) { const s = S(), h = s.h[k] * Math.PI / 180; return [s.cx[k] + o * Math.cos(h), s.cy[k] - o * Math.sin(h)]; }
+
+// ---------------------------------------------------------------------------------- main view
+const cv = $("view"), g = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = devicePixelRatio || 1; W = cv.clientWidth; H = cv.clientHeight; cv.width = W * DPR; cv.height = H * DPR;
+  const m = $("mini"); m.width = m.clientWidth * DPR; m.height = m.clientHeight * DPR;
+  if (T) { drawMiniBase(); drawTimeline(); }
+}
+addEventListener("resize", resize);
+
+function polyline(k0, k1, o, step = 1) {
+  g.beginPath(); let first = true;
+  for (let k = k0; k <= k1; k += step) { const [x, y] = side(k, o); first ? g.moveTo(x, -y) : g.lineTo(x, -y); first = false; }
+}
+
+function drawCar(x, y, hdeg, color, brake, sig, blink, scale = 1) {
+  g.save(); g.translate(x, -y); g.rotate(hdeg * Math.PI / 180);
+  const L = 4.6 * scale, Wd = 1.85 * scale;
+  g.fillStyle = "rgba(0,0,0,.35)"; g.fillRect(-Wd / 2 + .25, -L / 2 + .35, Wd, L);
+  g.fillStyle = color; roundRect(-Wd / 2, -L / 2, Wd, L, .45); g.fill();
+  g.fillStyle = "rgba(20,30,45,.85)"; roundRect(-Wd / 2 + .2, -L / 2 + .9, Wd - .4, 1.1, .25); g.fill();   // windshield
+  g.fillStyle = "rgba(20,30,45,.7)"; roundRect(-Wd / 2 + .25, L / 2 - 1.15, Wd - .5, .7, .2); g.fill();
+  if (brake) { g.fillStyle = "#ff3030"; g.shadowColor = "#ff3030"; g.shadowBlur = 12; g.fillRect(-Wd / 2, L / 2 - .25, .55, .25); g.fillRect(Wd / 2 - .55, L / 2 - .25, .55, .25); g.shadowBlur = 0; }
+  if (blink && (sig === 1 || sig === 2)) {
+    g.fillStyle = "#ffb02e"; g.shadowColor = "#ffb02e"; g.shadowBlur = 14;
+    const sx = sig === 1 ? -Wd / 2 - .15 : Wd / 2 - .2;
+    g.fillRect(sx, -L / 2 + .1, .35, .5); g.fillRect(sx, L / 2 - .6, .35, .5); g.shadowBlur = 0;
+  }
+  g.restore();
+}
+function roundRect(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+function draw(now) {
+  requestAnimationFrame(draw);
+  if (!T) return;
+  const dt = lastTs == null ? 0 : Math.min(0.1, (now - lastTs) / 1000); lastTs = now;
+  const s = S(), n = s.x.length;
+  if (playing) head = Math.min(n - 1, head + dt * T.hz * SPEEDS[speedIdx]);
+  if (head >= n - 1 && playing && $("auto").checked && !loading) { loadTrip(); }
+  const p = at(head), k = p.k;
+  const night = s.night[k] === 1, rain = s.wiper[k] === 1;
+  // camera: heading-up, the car a bit below the centre
+  const ppm = Math.max(5, Math.min(13, 13 - p.v / 14));       // zoom out at speed
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  g.fillStyle = night ? "#0a0d12" : "#1d2a22"; g.fillRect(0, 0, W, H);
+  g.save();
+  g.translate(W / 2, H * 0.66); g.scale(ppm, ppm); g.rotate(-p.h * Math.PI / 180); g.translate(-p.x, p.y);
+  const k0 = Math.max(0, k - 500), k1 = Math.min(n - 1, k + 900);
+  const lanes = Math.max(3, Math.round((T.laneMax - T.laneMin) / 3.5) + 1);
+  const mid = (T.laneMax + T.laneMin) / 2, half = lanes * 3.5 / 2;
+  // cross streets at turns
+  for (const t of T.turns) {
+    if (t.i < k0 || t.i > k1) continue;
+    const kb = Math.max(0, t.i - 6), h = s.h[kb] * Math.PI / 180, [x, y] = side(t.i, mid);
+    g.save(); g.translate(x, -y); g.rotate(h);
+    g.fillStyle = night ? "#20252c" : "#3a4048"; g.fillRect(-60, -half - 2, 120, 2 * half + 4);
+    g.restore();
+  }
+  // road
+  g.lineJoin = "round"; g.lineCap = "round";
+  g.strokeStyle = night ? "#23282f" : "#3c434c"; g.lineWidth = 2 * half + 1.2; polyline(k0, k1, mid, 2); g.stroke();
+  // school zones (red-tinted road, like Korean school zones)
+  g.strokeStyle = "rgba(214,60,60,.45)"; g.lineWidth = 2 * half;
+  for (let a = k0; a <= k1; a++) { if (s.school[a] === 1) { let b = a; while (b < k1 && s.school[b + 1] === 1) b++; polyline(a, b, mid, 1); g.stroke(); a = b; } }
+  // lane lines
+  g.lineWidth = .15;
+  for (let j = 0; j <= lanes; j++) {
+    const o = mid - half + j * 3.5;
+    g.strokeStyle = (j === 0 || j === lanes) ? "#d9dde2" : "rgba(230,233,237,.85)";
+    g.setLineDash(j === 0 || j === lanes ? [] : [3, 6]); polyline(k0, k1, o, 2); g.stroke();
+  }
+  g.setLineDash([]);
+  // speed-limit signs beside the road
+  for (const i of T.limitSigns) {
+    if (i < k0 || i > k1) continue;
+    const [x, y] = side(i, mid + half + 2.2);
+    g.save(); g.translate(x, -y); g.rotate(s.h[i] * Math.PI / 180);
+    g.fillStyle = "#fff"; g.beginPath(); g.arc(0, 0, 1.25, 0, 7); g.fill(); g.lineWidth = .32; g.strokeStyle = "#e33"; g.stroke();
+    g.fillStyle = "#111"; g.font = "bold 1.05px sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(String(s.lim[i]), 0, .05);
+    g.restore();
+  }
+  // judgment pins on the road
+  for (const j of T.judgments) {
+    if (j.i < k0 || j.i > k1 || j.cat === "miss") continue;
+    const [x, y] = side(j.i, mid - half - 1.6);
+    g.fillStyle = COLORS[j.cat]; g.globalAlpha = j.i <= head ? 1 : .45;
+    g.beginPath(); g.arc(x, -y, .9, 0, 7); g.fill(); g.globalAlpha = 1;
+  }
+  // other cars: lead-car braking, cut-ins, emergency stops
+  const blink = Math.floor(now / 330) % 2 === 0;
+  for (const e of T.forced) {
+    if (head < e.i0 - 15 || head > e.i1 + 10) continue;
+    const f = Math.max(0, Math.min(1, (head - e.i0) / Math.max(1, e.i1 - e.i0)));
+    let gap, lat = 0;
+    if (e.kind === "cut_in") { gap = lerp(14, 9, f); lat = f < .45 ? lerp(3.5, 0, f / .45) : 0; }
+    else if (e.kind === "emergency_stop") gap = lerp(38, 6.5, Math.min(1, f * 1.2));
+    else gap = lerp(30, 8, f);
+    const hr = p.h * Math.PI / 180;
+    const ex = p.x + gap * Math.sin(hr) + lat * Math.cos(hr), ey = p.y + gap * Math.cos(hr) - lat * Math.sin(hr);
+    drawCar(ex, ey, p.h, "#c8ccd2", f > .05 && f < .9, e.kind === "cut_in" && f < .45 ? 1 : 0, blink);
+    if (e.fca && s.fca[k] === 1) { g.save(); g.translate(ex, -ey); g.rotate(p.h * Math.PI / 180); g.fillStyle = "rgba(255,80,80,.85)"; g.font = "bold 1.6px sans-serif"; g.textAlign = "center"; g.fillText("FCA", 0, -3.6); g.restore(); }
+  }
+  // headlights at night
+  if (night) {
+    const hr = p.h * Math.PI / 180;
+    g.save(); g.translate(p.x, -p.y); g.rotate(hr);
+    const grd = g.createRadialGradient(0, -3, 1, 0, -22, 30); grd.addColorStop(0, "rgba(255,244,200,.35)"); grd.addColorStop(1, "rgba(255,244,200,0)");
+    g.fillStyle = grd; g.beginPath(); g.moveTo(-1, -2.3); g.lineTo(-9, -40); g.lineTo(9, -40); g.lineTo(1, -2.3); g.closePath(); g.fill(); g.restore();
+  }
+  // our car
+  drawCar(p.x, p.y, p.h, "#2f7df6", s.brake[k] === 1, s.sig[k], blink);
+  g.restore();
+  // rain
+  if (rain) {
+    g.strokeStyle = "rgba(160,200,255,.35)"; g.lineWidth = 1;
+    for (let r = 0; r < 160; r++) { const rx = (r * 97 + now * .35) % W, ry = (r * 53 + now * .9) % H; g.beginPath(); g.moveTo(rx, ry); g.lineTo(rx - 3, ry + 11); g.stroke(); }
+  }
+  hud(p, k); popups(); drawMini(p); drawPlayhead();
+}
+
+function hud(p, k) {
+  const s = S();
+  $("speed").innerHTML = Math.round(p.v) + "<small>km/h</small>";
+  const lim = s.lim[k]; const L = $("limit"); L.textContent = lim ?? "–"; L.className = lim ? "" : "none";
+  L.style.borderColor = s.school[k] === 1 ? "#ffcc00" : "#e33";
+  $("arrowL").className = s.sig[k] === 1 ? "on" : ""; $("arrowR").className = s.sig[k] === 2 ? "on" : "";
+  $("brakeI").className = s.brake[k] === 1 ? "on" : ""; $("wiperI").className = s.wiper[k] === 1 ? "on" : "";
+  const tt = s.t[k] - s.t[0], tot = s.t[s.t.length - 1] - s.t[0];
+  const mmss = (x) => `${String(Math.floor(x / 60)).padStart(2, "0")}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+  $("clock").textContent = `${mmss(tt)} / ${mmss(tot)}`;
+}
+
+function popups() {
+  // judgments reached by the playhead: a pop-up near the car and a line in the event list
+  for (const j of T.judgments) {
+    if (j.i <= shownUpTo || j.i > head) continue;
+    addEvent(j);
+    if (j.cat !== "miss" && SPEEDS[speedIdx] <= 16) {
+      const d = document.createElement("div"); d.className = "pop"; d.style.background = COLORS[j.cat];
+      d.style.color = j.cat === "held" ? "#fff" : "#08110b";
+      d.textContent = `${CAT_TEXT[j.cat]} · ${j.label}` + (j.p != null ? `  (게이트 ${(j.p * 100).toFixed(0)}%)` : "");
+      $("popups").appendChild(d); setTimeout(() => d.remove(), 2700);
+      while ($("popups").children.length > 3) $("popups").firstChild.remove();
+    }
+  }
+  shownUpTo = Math.max(shownUpTo, Math.floor(head));
+}
+
+function addEvent(j) {
+  const s = S(), tt = s.t[Math.min(j.i, s.t.length - 1)] - s.t[0];
+  const div = document.createElement("div"); div.className = "ev";
+  const why = j.gated ? `게이트 ${(j.p * 100).toFixed(0)}% · ` : "";
+  const truth = j.truth == null ? "정답 없음" : j.truth ? "정답: 잘함" : "정답: 아님";
+  div.innerHTML = `<span class="tm">${String(Math.floor(tt / 60)).padStart(2, "0")}:${String(Math.floor(tt % 60)).padStart(2, "0")}</span>`
+    + `<span class="sw" style="background:${COLORS[j.cat]}"></span>`
+    + `<span class="tx">${j.label} <small>· ${CAT_TEXT[j.cat]}<br>${why}${truth}${j.held ? " · 출시 보류 습관" : ""}</small></span>`;
+  div.onclick = () => { head = Math.max(0, j.i - 25); shownUpTo = Math.floor(head); };
+  $("events").prepend(div);
+}
+
+// ---------------------------------------------------------------------------------- minimap & timeline
+let miniBox = null;
+function drawMiniBase() {
+  const m = $("mini"), s = S(); const xs = s.x, ys = s.y;
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const w = m.width, h = m.height, pad = 12 * DPR, sc = Math.min((w - 2 * pad) / Math.max(1, maxX - minX), (h - 2 * pad) / Math.max(1, maxY - minY));
+  miniBox = { minX, maxY, sc, pad, ox: (w - (maxX - minX) * sc) / 2, oy: (h - (maxY - minY) * sc) / 2 };
+}
+function mxy(x, y) { const b = miniBox; return [b.ox + (x - b.minX) * b.sc, b.oy + (b.maxY - y) * b.sc]; }
+function drawMini(p) {
+  const m = $("mini"), c = m.getContext("2d"), s = S(); c.clearRect(0, 0, m.width, m.height);
+  c.lineWidth = 2 * DPR; c.strokeStyle = "#4b5563"; c.beginPath();
+  for (let k = 0; k < s.x.length; k += 3) { const [x, y] = mxy(s.x[k], s.y[k]); k ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
+  c.strokeStyle = "#2f7df6"; c.beginPath();
+  for (let k = 0; k <= p.k; k += 3) { const [x, y] = mxy(s.x[k], s.y[k]); k ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
+  for (const j of T.judgments) { if (j.cat === "miss") continue; const [x, y] = mxy(s.x[j.i] ?? 0, s.y[j.i] ?? 0); c.fillStyle = COLORS[j.cat]; c.beginPath(); c.arc(x, y, 2.4 * DPR, 0, 7); c.fill(); }
+  const [x, y] = mxy(p.x, p.y); c.fillStyle = "#fff"; c.beginPath(); c.arc(x, y, 4 * DPR, 0, 7); c.fill();
+  c.fillStyle = "#8a96a3"; c.font = `${10 * DPR}px sans-serif`; c.fillText("N ↑", 8 * DPR, m.height - 8 * DPR);
+}
+function drawTimeline() {
+  const tl = $("tl"); tl.width = tl.clientWidth * DPR; tl.height = tl.clientHeight * DPR;
+  const c = tl.getContext("2d"), n = S().x.length, w = tl.width, h = tl.height;
+  c.clearRect(0, 0, w, h); c.fillStyle = "#222a33"; c.fillRect(0, h * .42, w, h * .16);
+  for (const e of T.forced) { c.fillStyle = "rgba(255,255,255,.18)"; c.fillRect(e.i0 / n * w, h * .25, Math.max(2, (e.i1 - e.i0) / n * w), h * .5); }
+  for (const j of T.judgments) { c.fillStyle = COLORS[j.cat]; const x = j.i / n * w; c.fillRect(x - 1, j.cat === "miss" ? h * .62 : h * .1, 2 * DPR, j.cat === "miss" ? h * .25 : h * .32); }
+  tl._base = c.getImageData(0, 0, w, h);
+}
+function drawPlayhead() {
+  const tl = $("tl"), c = tl.getContext("2d"); if (!tl._base) return;
+  c.putImageData(tl._base, 0, 0); const x = head / S().x.length * tl.width;
+  c.fillStyle = "#fff"; c.fillRect(x - DPR, 0, 2 * DPR, tl.height);
+}
+$("timeline").onclick = (ev) => { if (!T) return; const r = $("timeline").getBoundingClientRect(); head = (ev.clientX - r.left) / r.width * (S().x.length - 1); shownUpTo = Math.floor(head); };
+
+// ---------------------------------------------------------------------------------- controls
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "⏸ 일시정지" : "▶ 재생"; };
+$("speedBtn").onclick = () => { speedIdx = (speedIdx + 1) % SPEEDS.length; $("speedBtn").textContent = "×" + SPEEDS[speedIdx]; };
+$("next").onclick = () => loadTrip();
+addEventListener("keydown", (e) => { if (e.code === "Space") { $("play").click(); e.preventDefault(); } if (e.key === "n") loadTrip(); });
+
+resize();
+refreshStatus().then(loadTrip);
+setInterval(refreshStatus, 10000);
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

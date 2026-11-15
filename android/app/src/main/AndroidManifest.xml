@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature
+        android:name="android.hardware.type.automotive"
+        android:required="true" />
+
+    <!-- AAOS vehicle properties (speed is a runtime permission) -->
+    <uses-permission android:name="android.car.permission.CAR_SPEED" />
+    <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
+    <uses-permission android:name="android.car.permission.CAR_EXTERIOR_ENVIRONMENT" />
+    <!-- Pleos Vehicle SDK domains used by SafeLog (brake, steering, turn signal, wipers, lights, cruise, seats, odometer) -->
+    <uses-permission android:name="pleos.car.permission.CAR_DRIVE" />
+    <uses-permission android:name="pleos.car.permission.CAR_LIGHTS" />
+    <uses-permission android:name="pleos.car.permission.CAR_SEATS" />
+    <uses-permission android:name="pleos.car.permission.CAR_WINDOWS" />
+    <uses-permission android:name="pleos.car.permission.CAR_SAFETY" />
+    <uses-permission android:name="pleos.car.permission.CAR_INFO" />
+    <!-- NaviHelper 3.0.5: next turn (TBT), caution points, speed limit, current location for the signal / speed habits.
+         get*Info() and requestTrip() need NAVI_ROUTE (getCurrentLocationInfo throws SecurityException without it);
+         addListener itself has no permission in the API reference. Protection level normal: granted at install, no
+         runtime request. Not declared: NAVI_ROUTE_SEARCH (route requests) and NAVI_CUSTOM_MAP (navigation screen).
+         SafeLog uses neither, and permissions the App Market has not approved fail the app review. -->
+    <uses-permission android:name="pleos.car.permission.NAVI_ROUTE" />
+    <!-- Pleos TextToSpeech 3.3.1 (on-device mode): the praise line at a signal wait and the voice preview -->
+    <uses-permission android:name="pleos.car.permission.TTS_SERVICE" />
+    <!-- optional ledger mirror (backend/server) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- keep recording while navigation is in front -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".SafeLogApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_safelog"
+        android:label="세이프로그"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_safelog_round"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.SafeLog">
+        <uses-library
+            android:name="android.car"
+            android:required="false" />
+
+        <!-- 화면 방향을 고정하지 않는다. 세로·가로 모두 같은 기능이어야 한다(심사 항목). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:resizeableActivity="true">
+            <!-- 주행 중에도 이 화면을 보여도 된다고 차에 알린다(AAOS 주행 규제). 없으면 D에서 시스템이
+                 "주행 중에는 사용할 수 없습니다"로 앱 전체를 가린다. 주행 중 화면은 글 한 줄·미션 이름만 둔다. -->
+            <meta-data
+                android:name="distractionOptimized"
+                android:value="true" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".DriveService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Records the driver's good driving habits from vehicle signals during a trip" />
+        </service>
+    </application>
+</manifest>

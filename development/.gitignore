@@ -1,0 +1,6 @@
+datasets/*/
+*.pkl
+*.npz
+.venv/
+__pycache__/
+logs/

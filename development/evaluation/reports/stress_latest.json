@@ -1,0 +1,1026 @@
+{
+  "gate": "D:\\TF_Hyundai\\development\\model_training\\checkpoints\\gate.pt",
+  "trips_per_condition": 30,
+  "seconds": 249.4,
+  "conditions": {
+    "baseline": {
+      "trips": 30,
+      "hours": 13.3,
+      "praises": 1163,
+      "precision": 0.9974204643164231,
+      "recall": 0.6233207952713595,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 88.26473999943119,
+      "worst_habits": [
+        [
+          "rain_speed",
+          0.981
+        ],
+        [
+          "smooth_launch",
+          0.986
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 59,
+          "precision": 0.9830508474576272
+        },
+        "steady_cruise": {
+          "n": 28,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 2,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "speed_1hz": {
+      "trips": 30,
+      "hours": 10.5,
+      "praises": 711,
+      "precision": 0.9985935302390999,
+      "recall": 0.5670926517571885,
+      "false_praise_per_100_trips": 3.3333333333333335,
+      "crashes": 0,
+      "engine_ms_per_trip": 64.08492333527344,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.992
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 63,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 6,
+          "precision": 0.8333333333333334
+        },
+        "steady_cruise": {
+          "n": 11,
+          "precision": 0.9090909090909091
+        }
+      },
+      "pass": true
+    },
+    "heavy_dropouts": {
+      "trips": 30,
+      "hours": 17.8,
+      "praises": 1024,
+      "precision": 0.9921875,
+      "recall": 0.5421558164354322,
+      "false_praise_per_100_trips": 26.666666666666668,
+      "crashes": 0,
+      "engine_ms_per_trip": 104.4722966675181,
+      "worst_habits": [
+        [
+          "smooth_launch",
+          0.945
+        ],
+        [
+          "smooth_turn",
+          0.977
+        ],
+        [
+          "speed_limit",
+          0.994
+        ]
+      ],
+      "held_habits": {
+        "steady_cruise": {
+          "n": 9,
+          "precision": 1.0
+        },
+        "smooth_stop": {
+          "n": 62,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 4,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "no_heading_no_nav": {
+      "trips": 30,
+      "hours": 12.3,
+      "praises": 620,
+      "precision": 0.9951612903225806,
+      "recall": 0.4625187406296852,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 72.37223333407503,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.983
+        ],
+        [
+          "smooth_launch",
+          0.99
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 49,
+          "precision": 1.0
+        },
+        "steady_cruise": {
+          "n": 5,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 1,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "no_nav_data": {
+      "trips": 30,
+      "hours": 13.5,
+      "praises": 786,
+      "precision": 1.0,
+      "recall": 0.45777518928363425,
+      "false_praise_per_100_trips": 0.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 74.3705999988985,
+      "worst_habits": [
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ],
+        [
+          "lane_change_signal",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 49,
+          "precision": 0.9795918367346939
+        },
+        "anticipatory_braking": {
+          "n": 1,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "noisy_steering_x4": {
+      "trips": 30,
+      "hours": 11.2,
+      "praises": 621,
+      "precision": 0.998389694041868,
+      "recall": 0.47913446676970634,
+      "false_praise_per_100_trips": 3.3333333333333335,
+      "crashes": 0,
+      "engine_ms_per_trip": 71.47467333513002,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.988
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "steady_cruise": {
+          "n": 4,
+          "precision": 1.0
+        },
+        "smooth_stop": {
+          "n": 63,
+          "precision": 0.9523809523809523
+        },
+        "anticipatory_braking": {
+          "n": 3,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "cluster_bias_6pct": {
+      "trips": 30,
+      "hours": 14.8,
+      "praises": 1006,
+      "precision": 0.9950298210735586,
+      "recall": 0.5104538500764916,
+      "false_praise_per_100_trips": 16.666666666666668,
+      "crashes": 0,
+      "engine_ms_per_trip": 88.47596999936893,
+      "worst_habits": [
+        [
+          "smooth_turn",
+          0.946
+        ],
+        [
+          "blinker_cancel",
+          0.992
+        ],
+        [
+          "smooth_launch",
+          0.992
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 51,
+          "precision": 1.0
+        },
+        "steady_cruise": {
+          "n": 21,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 1,
+          "precision": 0.0
+        }
+      },
+      "pass": true
+    },
+    "rain_night": {
+      "trips": 30,
+      "hours": 18.8,
+      "praises": 1695,
+      "precision": 0.9982300884955753,
+      "recall": 0.6409090909090909,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 110.07159000243216,
+      "worst_habits": [
+        [
+          "smooth_launch",
+          0.99
+        ],
+        [
+          "speed_limit",
+          0.994
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 54,
+          "precision": 0.9629629629629629
+        },
+        "steady_cruise": {
+          "n": 47,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 6,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "heavy_rain": {
+      "trips": 30,
+      "hours": 16.9,
+      "praises": 1429,
+      "precision": 0.9923023093072079,
+      "recall": 0.6302222222222222,
+      "false_praise_per_100_trips": 36.666666666666664,
+      "crashes": 0,
+      "engine_ms_per_trip": 98.84591000154614,
+      "worst_habits": [
+        [
+          "rain_speed",
+          0.98
+        ],
+        [
+          "smooth_launch",
+          0.98
+        ],
+        [
+          "speed_limit",
+          0.983
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 31,
+          "precision": 0.967741935483871
+        },
+        "steady_cruise": {
+          "n": 52,
+          "precision": 0.9807692307692307
+        },
+        "anticipatory_braking": {
+          "n": 4,
+          "precision": 0.75
+        }
+      },
+      "pass": true
+    },
+    "cut_in_storm": {
+      "trips": 30,
+      "hours": 11.1,
+      "praises": 797,
+      "precision": 0.9874529485570891,
+      "recall": 0.5025542784163474,
+      "false_praise_per_100_trips": 33.333333333333336,
+      "crashes": 0,
+      "engine_ms_per_trip": 75.42959666752722,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.954
+        ],
+        [
+          "smooth_lane_change",
+          0.982
+        ],
+        [
+          "smooth_launch",
+          0.99
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 35,
+          "precision": 0.7714285714285715
+        },
+        "steady_cruise": {
+          "n": 2,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 8,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "expressway": {
+      "trips": 30,
+      "hours": 14.6,
+      "praises": 1055,
+      "precision": 0.995260663507109,
+      "recall": 0.5605979711692471,
+      "false_praise_per_100_trips": 16.666666666666668,
+      "crashes": 0,
+      "engine_ms_per_trip": 88.78045000019483,
+      "worst_habits": [
+        [
+          "smooth_turn",
+          0.952
+        ],
+        [
+          "speed_limit",
+          0.989
+        ],
+        [
+          "smooth_launch",
+          0.99
+        ]
+      ],
+      "held_habits": {
+        "steady_cruise": {
+          "n": 36,
+          "precision": 0.9722222222222222
+        },
+        "smooth_stop": {
+          "n": 55,
+          "precision": 0.9454545454545454
+        },
+        "anticipatory_braking": {
+          "n": 2,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "rural_curves": {
+      "trips": 30,
+      "hours": 10.3,
+      "praises": 630,
+      "precision": 0.9952380952380953,
+      "recall": 0.494869771112865,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 58.05627333368951,
+      "worst_habits": [
+        [
+          "smooth_turn",
+          0.95
+        ],
+        [
+          "blinker_cancel",
+          0.985
+        ],
+        [
+          "speed_limit",
+          0.993
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 78,
+          "precision": 0.9615384615384616
+        },
+        "anticipatory_braking": {
+          "n": 3,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "aggressive_drivers": {
+      "trips": 30,
+      "hours": 9.9,
+      "praises": 300,
+      "precision": 1.0,
+      "recall": 0.6369426751592356,
+      "false_praise_per_100_trips": 0.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 43.454236669155456,
+      "worst_habits": [
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ],
+        [
+          "right_turn_pause",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "steady_cruise": {
+          "n": 2,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "novice_drivers": {
+      "trips": 30,
+      "hours": 10.3,
+      "praises": 760,
+      "precision": 0.9921052631578947,
+      "recall": 0.5951065509076559,
+      "false_praise_per_100_trips": 20.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 63.72099000145681,
+      "worst_habits": [
+        [
+          "smooth_turn",
+          0.97
+        ],
+        [
+          "speed_limit",
+          0.985
+        ],
+        [
+          "smooth_launch",
+          0.988
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 43,
+          "precision": 0.9302325581395349
+        },
+        "steady_cruise": {
+          "n": 15,
+          "precision": 0.9333333333333333
+        },
+        "anticipatory_braking": {
+          "n": 1,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "drowsy_drivers": {
+      "trips": 30,
+      "hours": 11.6,
+      "praises": 700,
+      "precision": 0.9957142857142857,
+      "recall": 0.5106227106227106,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 82.99757666827645,
+      "worst_habits": [
+        [
+          "smooth_launch",
+          0.985
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "anticipatory_braking": {
+          "n": 14,
+          "precision": 0.42857142857142855
+        },
+        "smooth_stop": {
+          "n": 90,
+          "precision": 0.9333333333333333
+        },
+        "steady_cruise": {
+          "n": 5,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "careful_drivers": {
+      "trips": 30,
+      "hours": 14.8,
+      "praises": 1282,
+      "precision": 0.9914196567862714,
+      "recall": 0.6169902912621359,
+      "false_praise_per_100_trips": 36.666666666666664,
+      "crashes": 0,
+      "engine_ms_per_trip": 103.28958666456553,
+      "worst_habits": [
+        [
+          "smooth_launch",
+          0.971
+        ],
+        [
+          "speed_limit",
+          0.982
+        ],
+        [
+          "rain_speed",
+          0.987
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 110,
+          "precision": 1.0
+        },
+        "steady_cruise": {
+          "n": 37,
+          "precision": 0.918918918918919
+        },
+        "anticipatory_braking": {
+          "n": 8,
+          "precision": 0.875
+        }
+      },
+      "pass": true
+    },
+    "steer_official": {
+      "trips": 30,
+      "hours": 16.6,
+      "praises": 795,
+      "precision": 0.9974842767295597,
+      "recall": 0.5656205420827389,
+      "false_praise_per_100_trips": 6.666666666666667,
+      "crashes": 0,
+      "engine_ms_per_trip": 100.32271333426858,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.983
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 62,
+          "precision": 0.9193548387096774
+        },
+        "steady_cruise": {
+          "n": 13,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 1,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "steer_sign_positive": {
+      "trips": 30,
+      "hours": 10.1,
+      "praises": 739,
+      "precision": 0.9905277401894452,
+      "recall": 0.5879518072289157,
+      "false_praise_per_100_trips": 23.333333333333332,
+      "crashes": 0,
+      "engine_ms_per_trip": 68.55863666860387,
+      "worst_habits": [
+        [
+          "smooth_launch",
+          0.966
+        ],
+        [
+          "speed_limit",
+          0.981
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 56,
+          "precision": 0.9821428571428571
+        },
+        "steady_cruise": {
+          "n": 5,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 11,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "steer_wheel_unit": {
+      "trips": 30,
+      "hours": 16.4,
+      "praises": 1176,
+      "precision": 0.9957482993197279,
+      "recall": 0.634001082837033,
+      "false_praise_per_100_trips": 16.666666666666668,
+      "crashes": 0,
+      "engine_ms_per_trip": 105.02183332961674,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.988
+        ],
+        [
+          "smooth_launch",
+          0.992
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 93,
+          "precision": 0.956989247311828
+        },
+        "steady_cruise": {
+          "n": 69,
+          "precision": 0.9420289855072463
+        },
+        "anticipatory_braking": {
+          "n": 22,
+          "precision": 0.8636363636363636
+        }
+      },
+      "pass": true
+    },
+    "steer_coarse_1deg": {
+      "trips": 30,
+      "hours": 18.4,
+      "praises": 654,
+      "precision": 0.9984709480122325,
+      "recall": 0.4096612296110414,
+      "false_praise_per_100_trips": 3.3333333333333335,
+      "crashes": 0,
+      "engine_ms_per_trip": 102.2864900015217,
+      "worst_habits": [
+        [
+          "blinker_cancel",
+          0.989
+        ],
+        [
+          "headlights",
+          1.0
+        ],
+        [
+          "rain_speed",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "steady_cruise": {
+          "n": 13,
+          "precision": 0.9230769230769231
+        },
+        "smooth_stop": {
+          "n": 40,
+          "precision": 0.9
+        },
+        "anticipatory_braking": {
+          "n": 7,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "car_geometry_+10pct": {
+      "trips": 30,
+      "hours": 12.9,
+      "praises": 815,
+      "precision": 0.9938650306748467,
+      "recall": 0.5461901550910316,
+      "false_praise_per_100_trips": 16.666666666666668,
+      "crashes": 0,
+      "engine_ms_per_trip": 77.53049333502229,
+      "worst_habits": [
+        [
+          "smooth_launch",
+          0.979
+        ],
+        [
+          "rain_speed",
+          0.984
+        ],
+        [
+          "speed_limit",
+          0.989
+        ]
+      ],
+      "held_habits": {
+        "anticipatory_braking": {
+          "n": 7,
+          "precision": 0.7142857142857143
+        },
+        "smooth_stop": {
+          "n": 50,
+          "precision": 0.96
+        },
+        "steady_cruise": {
+          "n": 7,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "car_geometry_-10pct": {
+      "trips": 30,
+      "hours": 14.4,
+      "praises": 866,
+      "precision": 0.9907621247113164,
+      "recall": 0.5159350571256764,
+      "false_praise_per_100_trips": 26.666666666666668,
+      "crashes": 0,
+      "engine_ms_per_trip": 85.2450799982762,
+      "worst_habits": [
+        [
+          "right_turn_pause",
+          0.947
+        ],
+        [
+          "turn_signal_turn",
+          0.969
+        ],
+        [
+          "smooth_launch",
+          0.973
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 50,
+          "precision": 1.0
+        },
+        "steady_cruise": {
+          "n": 36,
+          "precision": 0.9444444444444444
+        },
+        "anticipatory_braking": {
+          "n": 1,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "cruise_state_unknown": {
+      "trips": 30,
+      "hours": 15.9,
+      "praises": 662,
+      "precision": 0.9954682779456193,
+      "recall": 0.3281872509960159,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 75.06746666622348,
+      "worst_habits": [
+        [
+          "smooth_turn",
+          0.917
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 21,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "nav_updates_1hz": {
+      "trips": 30,
+      "hours": 16.2,
+      "praises": 979,
+      "precision": 0.992849846782431,
+      "recall": 0.5734513274336284,
+      "false_praise_per_100_trips": 23.333333333333332,
+      "crashes": 0,
+      "engine_ms_per_trip": 93.56087333192893,
+      "worst_habits": [
+        [
+          "caution_slowdown",
+          0.909
+        ],
+        [
+          "speed_limit",
+          0.944
+        ],
+        [
+          "smooth_launch",
+          0.992
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 63,
+          "precision": 0.9682539682539683
+        },
+        "anticipatory_braking": {
+          "n": 7,
+          "precision": 1.0
+        },
+        "steady_cruise": {
+          "n": 8,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "wiper_unknown_rain": {
+      "trips": 30,
+      "hours": 13.8,
+      "praises": 839,
+      "precision": 0.9952324195470799,
+      "recall": 0.4550408719346049,
+      "false_praise_per_100_trips": 13.333333333333334,
+      "crashes": 0,
+      "engine_ms_per_trip": 77.75459333497565,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.988
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "headlights",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 52,
+          "precision": 0.9615384615384616
+        },
+        "steady_cruise": {
+          "n": 44,
+          "precision": 0.8863636363636364
+        }
+      },
+      "pass": true
+    },
+    "slow_callbacks": {
+      "trips": 30,
+      "hours": 20.3,
+      "praises": 1374,
+      "precision": 0.9978165938864629,
+      "recall": 0.5185325264750378,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 112.12526999491577,
+      "worst_habits": [
+        [
+          "speed_limit",
+          0.99
+        ],
+        [
+          "smooth_launch",
+          0.993
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ]
+      ],
+      "held_habits": {
+        "smooth_stop": {
+          "n": 80,
+          "precision": 0.9625
+        },
+        "steady_cruise": {
+          "n": 29,
+          "precision": 1.0
+        },
+        "anticipatory_braking": {
+          "n": 4,
+          "precision": 1.0
+        }
+      },
+      "pass": true
+    },
+    "worst_case": {
+      "trips": 30,
+      "hours": 12.3,
+      "praises": 535,
+      "precision": 0.994392523364486,
+      "recall": 0.48628884826325414,
+      "false_praise_per_100_trips": 10.0,
+      "crashes": 0,
+      "engine_ms_per_trip": 49.16108333466885,
+      "worst_habits": [
+        [
+          "headlights",
+          0.993
+        ],
+        [
+          "blinker_cancel",
+          1.0
+        ],
+        [
+          "seat_belts",
+          1.0
+        ]
+      ],
+      "held_habits": {},
+      "pass": true
+    }
+  },
+  "fuzz": {
+    "cases": 200,
+    "crashes": 0,
+    "praise_without_speed": 0,
+    "pass": true
+  },
+  "all_pass": true
+}

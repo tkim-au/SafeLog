@@ -1,0 +1,16 @@
+{
+ "name": "lane_practice",
+ "title": "차선 바꾸기 연습",
+ "data_version": 3,
+ "hz": 10,
+ "duration_s": 589.3,
+ "seed": 122,
+ "places": [
+  [
+   0.0,
+   "출발지"
+  ]
+ ],
+ "rain": false,
+ "night": false
+}

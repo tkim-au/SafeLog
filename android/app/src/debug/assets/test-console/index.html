@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세이프로그 시험 신호</title>
+<style>
+:root {
+  --bg: #f4f6f9; --panel: #ffffff; --ink: #151a22; --muted: #5f6878; --faint: #8b93a1; --line: #e1e5eb;
+  --accent: #2463eb; --accent-ink: #ffffff; --accent-soft: #e7eefe; --good: #16834a; --good-soft: #e3f4ea;
+  --warn: #a5650a; --warn-soft: #fdf1dc; --bad: #c93636; --bad-soft: #fbe6e6; --seg: #eef1f5; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116; --panel: #161a21; --ink: #e7eaf0; --muted: #a0a8b6; --faint: #737c8b; --line: #29303b;
+    --accent: #6b9bff; --accent-ink: #0b1220; --accent-soft: #1b2843; --good: #45c97e; --good-soft: #13291d;
+    --warn: #e2a84d; --warn-soft: #2c2213; --bad: #ff7272; --bad-soft: #301818; --seg: #1f242d; --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
+button, input, select { font: inherit; color: inherit; }
+header {
+  position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line);
+  padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+}
+header h1 { font-size: 17px; margin: 0; letter-spacing: -.01em; }
+header .sub { color: var(--muted); font-size: 13px; }
+header .grow { flex: 1; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: var(--seg); color: var(--muted); white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.ok { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.accent { background: var(--accent-soft); color: var(--accent); }
+.pill.plain::before { display: none; }
+main { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; padding: 16px 20px 32px; max-width: 1480px; margin: 0 auto; }
+@media (max-width: 1080px) { main { grid-template-columns: minmax(0, 1fr); } }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; align-content: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; box-shadow: var(--shadow); min-width: 0; }
+.card h2 { font-size: 14.5px; margin: 0 0 2px; }
+.card .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
+.card.wide { grid-column: 1 / -1; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.row:first-of-type { border-top: 0; }
+.row > .label { color: var(--ink); font-weight: 500; min-width: 96px; }
+.row > .label small { display: block; color: var(--faint); font-weight: 400; font-size: 11.5px; }
+.controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.seg { display: inline-flex; background: var(--seg); border-radius: 8px; padding: 2px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; padding: 4px 10px; border-radius: 6px; cursor: pointer; color: var(--muted); font-weight: 500; min-width: 34px; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--panel); color: var(--ink); box-shadow: var(--shadow); }
+.seg button.on[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.btn { border: 1px solid var(--line); background: var(--panel); padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+.btn:hover { border-color: var(--faint); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.danger { color: var(--bad); }
+.btn:disabled { opacity: .45; cursor: default; }
+input[type=number], input[type=text], select { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 4px 8px; min-width: 0; }
+input[type=number] { width: 84px; }
+input[type=text] { width: 170px; }
+.unit { color: var(--muted); font-size: 12.5px; }
+.note { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.note.warn { color: var(--warn); }
+.note.good { color: var(--good); }
+.chip { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 600; }
+.chip button { border: 0; background: none; color: inherit; cursor: pointer; padding: 0 0 0 2px; font-size: 13px; line-height: 1; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cabin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0 18px; }
+.cabin-grid .row, .cabin-grid .row:first-of-type { border-top: 0; border-bottom: 1px solid var(--line); }
+.val { font-variant-numeric: tabular-nums; color: var(--faint); font-size: 12px; min-width: 34px; text-align: right; }
+.val.set { color: var(--accent); font-weight: 600; }
+aside { position: sticky; top: 64px; align-self: start; display: grid; gap: 16px; }
+@media (max-width: 1080px) { aside { position: static; } }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-size: 11.5px; font-weight: 600; color: var(--faint); padding: 10px 0 4px; letter-spacing: .02em; }
+td { padding: 4px 0; border-top: 1px solid var(--line); vertical-align: top; }
+td.k { color: var(--muted); width: 42%; }
+td.v { font-weight: 600; }
+td.v.unknown { color: var(--faint); font-weight: 400; }
+td.v small { display: block; color: var(--faint); font-weight: 400; font-size: 11.5px; }
+td.src { text-align: right; width: 44px; }
+.tag { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 5px; background: var(--seg); color: var(--faint); }
+.tag.test { background: var(--accent); color: var(--accent-ink); }
+details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 8px 0 0; font-size: 12.5px; }
+dt { color: var(--muted); }
+dd { margin: 0; word-break: break-word; }
+.log { list-style: none; margin: 0; padding: 0; font-size: 12.5px; display: grid; gap: 6px; }
+.log li { border-left: 3px solid var(--good); padding: 2px 0 2px 8px; word-break: break-word; }
+.log li.err { border-left-color: var(--bad); }
+.log li .t { color: var(--faint); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.log li .e { color: var(--bad); display: block; }
+.empty { color: var(--faint); font-size: 12.5px; }
+footer { color: var(--faint); font-size: 12px; padding: 0 20px 28px; max-width: 1480px; margin: 0 auto; }
+footer code { font-size: 11.5px; }
+.banner { display: none; margin: 12px 20px 0; padding: 10px 14px; border-radius: 10px; background: var(--bad-soft); color: var(--bad); font-weight: 500; }
+.banner.show { display: block; }
+.banner.warn { background: var(--warn-soft); color: var(--warn); }
+.section { grid-column: 1 / -1; margin: 4px 2px -6px; font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.section small { font-weight: 400; color: var(--faint); margin-left: 6px; letter-spacing: 0; }
+.section:first-child { margin-top: 0; }
+.banner .btn { margin-left: 10px; padding: 1px 10px; font-size: 12.5px; }
+.where { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: -2px 0 10px; padding: 7px 10px; border-radius: 8px; background: var(--seg); font-size: 12.5px; }
+.where dt { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.where dd { color: var(--muted); }
+.moments { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 18px; margin: 4px 0 2px; }
+.moments > div { border-left: 3px solid var(--accent); padding: 1px 0 1px 10px; font-size: 12.5px; color: var(--muted); }
+.moments b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 1px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>세이프로그 시험 신호</h1>
+    <div class="sub">Virtual Console에 없는 차 신호를 넣고, 시연 주행·기록 채우기 같은 일을 debug 앱에 시킵니다. 기어·속도·깜빡이·브레이크는 Virtual Console에서 바꿉니다. 넣은 차 신호는 세이프로그 앱에만 들어가고 에뮬레이터의 차는 그대로입니다.</div>
+  </div>
+  <div class="grow"></div>
+  <span id="conn" class="pill">연결 중</span>
+  <span id="count" class="pill plain">넣은 값 0개</span>
+  <button class="btn danger" id="clear-all">모두 지우기</button>
+</header>
+<div id="banner" class="banner"></div>
+<div id="restarted" class="banner warn" role="status"><span id="restarted-text"></span><button class="btn" id="restarted-ok" type="button">확인</button></div>
+
+<main>
+  <section class="cards">
+
+    <h3 class="section">앱에 시키기<small>앱의 시연 판과 같은 버튼</small></h3>
+
+    <div class="card wide">
+      <h2>시연 주행</h2>
+      <p class="hint">녹화한 주행을 차 신호가 들어오는 길로 그대로 흘려보냅니다. 주행 중 칭찬, 판정, 장부까지 실제와 같습니다. 끝나거나 '도착 (P)'을 누르면 판정하고 차 신호로 돌아갑니다. 아래에서 넣은 시험 신호도 그대로 덮입니다.</p>
+      <div class="row"><span class="label">배속</span><div class="seg" id="replay-speed" data-local="10" data-opts="1:×1|10:×10|30:×30"></div></div>
+      <div class="row"><span class="label">주행</span><div class="controls" id="trips"><span class="empty">불러오는 중</span></div></div>
+      <div class="note" id="replay-note">재생 중이 아님</div>
+    </div>
+
+    <div class="card">
+      <h2>내 차 익히기·연수 모드</h2>
+      <p class="hint">앱 화면에 보이는 데이터(실제 엔진 또는 샘플)에 보냅니다.</p>
+      <div class="row"><span class="label">다음 조작 감지<small id="tour-next">-</small></span><button class="btn primary" data-app="tour-step">감지</button></div>
+      <div class="row"><span class="label">새 차<small>내 차 익히기를 처음부터 다시 권합니다</small></span><button class="btn" data-app="new-car">새 차</button></div>
+      <div class="row"><span class="label">연수 모드 전환<small id="mode-now">-</small></span><button class="btn" data-app="mode-flip">엔진이 바꾼 것처럼</button></div>
+    </div>
+
+    <div class="card">
+      <h2>기록·포인트·서버</h2>
+      <p class="hint">실제 엔진에 넣습니다.</p>
+      <div class="row"><span class="label">기록 채우기<small>시연 주행 3개를 1~3일 전 주행으로</small></span><button class="btn" data-app="seed-history">채우기</button></div>
+      <div class="row"><span class="label">포인트<small id="points-now">-</small></span>
+        <div class="controls"><input type="number" id="points" value="500" min="1" step="100"><span class="unit">P</span><button class="btn" id="points-send">넣기</button></div></div>
+      <div class="row"><span class="label">판정 모델<small id="engine-now">-</small></span><button class="btn" data-app="load-model" title="먼저 adb push gate_v3.json /sdcard/Download/">불러오기</button></div>
+      <div class="row"><span class="label">서버 동기화<small id="sync-now">-</small></span><button class="btn" data-app="sync">지금</button></div>
+    </div>
+
+    <div class="card">
+      <h2>화면</h2>
+      <p class="hint">앱이 보여 주는 데이터와 디자인 시안. 샘플 데이터는 엔진 없이 화면만 검토할 때 씁니다.</p>
+      <div class="row"><span class="label">데이터</span><div class="seg" data-app-seg="screen" data-opts="live:실제 엔진|sample:샘플 데이터"></div></div>
+      <div class="row"><span class="label">샘플 순간<small>샘플 데이터일 때만</small></span>
+        <div class="controls" id="sample-moments">
+          <button class="btn" data-app="sample park">P 도착</button><button class="btn" data-app="sample drive">D 주행</button>
+          <button class="btn" data-app="sample idle">신호 대기</button><button class="btn" data-app="sample praise">칭찬</button>
+          <button class="btn" data-app="sample insurance">보험 도착</button></div></div>
+    </div>
+
+    <h3 class="section">차 신호<small>Virtual Console에 없는 신호</small></h3>
+
+    <div class="card wide">
+      <h2>넣은 값이 보이는 곳</h2>
+      <p class="hint">여기서 넣는 값은 세이프로그 앱이 받는 차 신호만 바꿉니다. 에뮬레이터의 차는 그대로라서 Virtual Console, Pleos 홈·계기판, 다른 앱에는 나타나지 않습니다.</p>
+      <div class="moments">
+        <div><b>곧바로</b>오른쪽 '앱이 받는 값'에 <span class="tag test">시험</span> 표시로 나옵니다. 차가 보낸 값은 그 밑에 작게 나옵니다.</div>
+        <div><b>주차 중 (기어 P)</b>앱의 내 차 익히기 화면에서 그 단계가 끝납니다. 홈의 권유 카드나 설정에서 들어갑니다.</div>
+        <div><b>주행 중</b>출발 전에 고른 미션을 해내면 칭찬 소리가 나고 캐릭터가 움직입니다. 핸들을 돌리는 중, 깜빡이를 켠 동안, 회전·주의 지점 300 m 안, 스쿨존 안에서는 미뤘다가 나고(20초 넘게 바쁘면 건너뜀) 5분에 한 번까지입니다. 주행 화면이 '기록 꺼짐'이면 판정하지 않습니다.</div>
+        <div><b>주차한 뒤</b>도착 화면과 기록 탭의 운전 일지에 나옵니다. 30초보다 짧은 주행은 판정하지 않습니다. 도착 화면에는 고른 미션과, 한 주행에서 기회가 3번 이상인 습관 중 잘한 것만 나옵니다.</div>
+      </div>
+      <p class="note">넣은 값은 앱 프로세스에만 있어서 앱이 다시 뜨면(재설치, 강제 종료, 앱이 죽음) 모두 사라집니다. 그때는 화면 맨 위에 알림이 뜹니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>좌석·안전벨트</h2>
+      <p class="hint">모두 안전벨트: 출발해서 처음 시속 10 km를 넘는 순간, 벨트 맨 좌석 수가 탑승 좌석 수 이상이면 성공. 탑승 좌석이 0이거나 벨트를 모르면 판정하지 않으니 출발 전에 넣어 두세요. 내 차 익히기 '안전벨트 매기'는 벨트 1개 이상.</p>
+      <dl class="where"><dt>주차 중</dt><dd>내 차 익히기 '안전벨트 매기'</dd>
+        <dt>주차한 뒤</dt><dd>운전 일지의 '모두 안전벨트' 장면. 다른 잘한 순간이 2개 이상이면 빠지고, 한 주행에 한 번뿐이라 도착 화면 목록에는 나오지 않습니다.</dd></dl>
+      <div class="row"><span class="label">탑승 좌석 수</span><div class="seg" data-ch="seats_occupied" data-opts="car:차 값|0|1|2|3|4|5"></div></div>
+      <div class="row"><span class="label">벨트 맨 좌석 수</span><div class="seg" data-ch="belts_buckled" data-opts="car:차 값|unknown:모름|0|1|2|3|4|5"></div></div>
+      <div class="note">에뮬레이터: 콘솔에 벨트 조작이 없어 벨트는 0으로 오고, 콘솔의 좌석 탑승은 앱에서 거꾸로 읽힙니다(Occupied → 빈 좌석). 판정을 보려면 둘 다 여기서 넣으세요.</div>
+    </div>
+
+    <div class="card">
+      <h2>주행 모드</h2>
+      <p class="hint">내 차 익히기 '드라이브 모드 바꾸기'는 값이 바뀌어야 끝납니다(예: ECO → SPORT).</p>
+      <dl class="where"><dt>주차 중</dt><dd>내 차 익히기 '드라이브 모드 바꾸기'. 주행 판정과 주행 화면에는 쓰지 않습니다.</dd></dl>
+      <div class="row"><span class="label">모드</span><div class="seg" data-ch="drive_mode" data-opts="car:차 값|ECO|NORMAL|SPORT"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>회전 안내 (내비)</h2>
+      <p class="hint">보낸 순간부터 엔진이 달린 거리만큼 줄여 셉니다. 깜빡이는 도심 30 m, 고속도로 100 m 전에 켜야 성공. 회전 지점을 지나면 '안내 끝'.</p>
+      <dl class="where"><dt>주행 중</dt><dd>'회전 30m 전 깜빡이' 미션을 골랐다면 회전 지점을 지날 때 셉니다. 칭찬 소리는 깜빡이를 끄고 핸들을 가운데로 둔 뒤에 납니다. 보낸 거리가 300 m 이하였다면 '안내 끝'도 눌러야 합니다(지난 뒤 20초 안).</dd>
+        <dt>주차한 뒤</dt><dd>운전 일지 '회전 ○m 전 깜빡이'. 도착 화면 목록은 한 주행에 회전이 3번 이상일 때.</dd></dl>
+      <div class="row"><span class="label">방향</span><div class="seg" id="tbt-type" data-local="LEFT" data-opts="LEFT:좌회전|RIGHT:우회전|UTURN:유턴|STRAIGHT:직진"></div></div>
+      <div class="row"><span class="label">회전 지점까지</span>
+        <div class="controls"><input type="number" id="tbt-dist" value="150" min="0" step="10"><span class="unit">m</span>
+          <button class="btn primary" id="tbt-send">안내 보내기</button><button class="btn" id="tbt-end">안내 끝</button></div></div>
+      <div class="note" id="tbt-note">안내 없음</div>
+    </div>
+
+    <div class="card">
+      <h2>길 정보 (내비)</h2>
+      <p class="hint">제한속도 지키기: 그 시간의 95% 이상을 제한속도 이하로. 비 오는 날은 제한속도의 80% 이하.</p>
+      <dl class="where"><dt>주행 중</dt><dd>'제한속도 지키기' 미션을 골랐다면 1분마다 판정해 칭찬 소리.</dd>
+        <dt>주차한 뒤</dt><dd>도착 화면 목록은 제한속도를 넣고 3분 넘게 달렸을 때. 1분 평균 속도가 제한속도의 60%보다 낮으면 그 1분은 세지 않습니다.</dd>
+        <dt>그 밖</dt><dd>도로가 고속도로면 회전 깜빡이 기준이 100 m가 됩니다. 정체와 길 안내는 지금 앱 화면과 판정에 쓰지 않습니다.</dd></dl>
+      <div class="row"><span class="label">제한속도</span>
+        <div class="controls"><input type="number" id="limit" value="50" min="0" step="10"><span class="unit">km/h</span>
+          <button class="btn primary" data-set-from="limit" data-ch="speed_limit_kph">넣기</button><button class="btn" data-clear="speed_limit_kph">차 값</button>
+          <span class="val" data-shows="speed_limit_kph"></span></div></div>
+      <div class="row"><span class="label">도로</span><div class="seg" data-ch="road_class" data-opts="car:차 값|URBAN:도심|RURAL:지방도|EXPRESSWAY:고속도로"></div></div>
+      <div class="row"><span class="label">정체</span><div class="seg" data-ch="congestion" data-opts="car:차 값|0:없음|1:서행|2:정체"></div></div>
+      <div class="row"><span class="label">길 안내</span><div class="seg" data-ch="nav_active" data-opts="car:차 값|0:안내 없음|1:안내 중"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>주의 구간 (내비)</h2>
+      <p class="hint">스쿨존 지키기: 스쿨존 안(3초 이상)에서 30 km/h 이하, 카메라 과속 없음.</p>
+      <dl class="where"><dt>주행 중</dt><dd>'스쿨존 시속 30km' 미션을 골랐다면 스쿨존을 나올 때 칭찬 소리. 주의 지점을 300 m 이하로 넣어 둔 동안에는 어떤 칭찬 소리도 나지 않으니, 지나간 뒤 '끝'을 누르세요.</dd>
+        <dt>주차한 뒤</dt><dd>운전 일지 '스쿨존 ○km 이하로 통과'. 주의 지점은 남은 거리가 0을 지나면 '과속방지턱 천천히', '철길 앞 일시정지', '주의 구간 미리 감속'으로 판정합니다(스쿨존·낙석 지점은 판정 안 함).</dd></dl>
+      <div class="row"><span class="label">스쿨존</span><div class="seg" data-ch="school_zone" data-opts="car:차 값|0:밖|1:안"></div></div>
+      <div class="row"><span class="label">단속 카메라</span><div class="seg" data-ch="camera_overspeed" data-opts="car:차 값|0:정상|1:과속"></div></div>
+      <div class="row"><span class="label">주의 지점</span>
+        <div class="controls">
+          <select id="caution-type">
+            <option value="SPEED_BUMP">과속방지턱</option><option value="RAILROAD">철길 건널목</option><option value="SCHOOL">스쿨존</option>
+            <option value="ACCIDENT_PRONE">사고 다발</option><option value="FOG">안개</option><option value="WILDLIFE">야생동물</option>
+            <option value="DOWNHILL">내리막</option><option value="FALLING_ROCK">낙석</option><option value="NARROW">좁은 길</option><option value="SLIPPERY">미끄럼</option>
+          </select>
+          <input type="number" id="caution-dist" value="200" min="0" step="10"><span class="unit">m 앞</span>
+        </div></div>
+      <div class="row"><span class="label"></span><div class="controls"><span class="val" data-shows="caution_type,caution_dist_m"></span><button class="btn primary" id="caution-send">보내기</button><button class="btn" id="caution-end">끝</button></div></div>
+    </div>
+
+    <div class="card">
+      <h2>장소 이름 (내비)</h2>
+      <p class="hint">운전 일지 장면에 붙는 이름입니다.</p>
+      <dl class="where"><dt>주차한 뒤</dt><dd>기록 탭 운전 일지의 장소. 주행 중에 보낸 이름만 쓰고, 장면이 없는 주행에는 보이지 않습니다.</dd></dl>
+      <div class="row"><span class="label">이름</span>
+        <div class="controls"><input type="text" id="place" value="서초대로"><button class="btn primary" id="place-send">보내기</button></div></div>
+    </div>
+
+    <div class="card wide">
+      <h2>내 차 익히기 조작</h2>
+      <p class="hint">차가 그 조작을 알린 것처럼 한 번 보냅니다. 주차(기어 P) 중에만 셉니다. '켜고 끄기' 단계는 켠 뒤 끄고, 시트 위치·풍량은 값을 바꿉니다. 넣어 둔 동안 차가 보낸 같은 신호는 무시합니다.</p>
+      <dl class="where"><dt>주차 중</dt><dd>앱의 내 차 익히기 화면(설정, 또는 홈의 권유 카드). 이미 끝난 단계는 그대로입니다.</dd></dl>
+      <div class="cabin-grid" id="cabin-grid"></div>
+      <div class="note warn" id="cabin-warn" hidden>지금은 주차 중이 아니라서 내 차 익히기에 세지 않습니다.</div>
+      <div class="controls" style="margin-top:10px"><button class="btn" id="cabin-clear">조작 신호 모두 차 값으로</button></div>
+    </div>
+
+    <div class="card wide">
+      <h2>그 밖의 채널</h2>
+      <p class="hint">데이터 계약의 다른 채널도 덮어쓸 수 있습니다(예: 콘솔이 못 넣는 소수점 속도 12.5).</p>
+      <dl class="where"><dt>보이는 곳</dt><dd>채널마다 다릅니다. 기어(gear)와 속도(speed_kph)를 넣으면 앱이 그 값으로 주차·주행을 정해서 화면이 바뀝니다.</dd></dl>
+      <div class="row"><span class="label">채널</span>
+        <div class="controls"><select id="any-ch"></select><input type="text" id="any-val" list="any-names" placeholder="값 (숫자, 이름, unknown)" style="width:200px"><datalist id="any-names"></datalist>
+          <button class="btn primary" id="any-set">넣기</button><button class="btn" id="any-clear">차 값으로</button></div></div>
+      <div class="row"><span class="label">덮어쓴 채널</span><div class="chips" id="chips"><span class="empty">없음</span></div></div>
+    </div>
+
+  </section>
+
+  <aside>
+    <div class="card">
+      <h2>앱이 받는 값</h2>
+      <p class="hint" id="live-line">기다리는 중</p>
+      <table id="live"></table>
+    </div>
+    <div class="card">
+      <h2>최근 명령</h2>
+      <ul class="log" id="log"><li class="empty" style="border:0">아직 없음</li></ul>
+    </div>
+    <div class="card">
+      <details><summary>앱이 차 신호를 어디서 읽나</summary><dl id="status"></dl></details>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  debug 빌드에만 있습니다(release APK에는 없음). 넣은 차 신호 값은 앱 프로세스에만 있어서 앱이 다시 뜨면 사라집니다.
+  경고등과 비상등은 실제 차에서 앱이 읽을 수 없는 신호라 넣지 않습니다. 명령줄로는 <code>android/tools/test-signal.sh</code>, 설명은 <code>docs/2_개발/시험_신호_넣기.md</code>.
+</footer>
+
+<script>
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+
+let catalog = null;          // {channels:[{id,kind,names}], cabin:[...], refused:{...}}
+let state = null;            // /api/state
+let tbtSent = null;          // {dist, at, est, lastAt}
+const recent = [];
+
+// ------------------------------------------------------------------ channel formatting (live table)
+const CH = {
+  speed_kph: { label: "속도", unit: "km/h", d: 1 }, gear: { label: "기어", names: { 0: "P", 1: "R", 2: "N", 3: "D" } },
+  brake_on: { label: "브레이크", names: { 0: "안 밟음", 1: "밟음" } }, steer_deg: { label: "조향각", unit: "°", d: 1 },
+  turn_signal: { label: "깜빡이", names: { 0: "꺼짐", 1: "왼쪽", 2: "오른쪽" } }, cruise_active: { label: "크루즈", names: { 0: "대기", 1: "작동" } },
+  drive_mode: { label: "주행 모드", names: { 0: "ECO", 1: "NORMAL", 2: "SPORT" } },
+  wiper_active: { label: "와이퍼", names: { 0: "멈춤", 1: "움직임" } }, low_beam: { label: "전조등", names: { 0: "꺼짐", 1: "켜짐" } },
+  night: { label: "야간", names: { 0: "낮", 1: "밤" } },
+  seats_occupied: { label: "탑승 좌석", unit: "석" }, belts_buckled: { label: "벨트 맨 좌석", unit: "석" },
+  nav_active: { label: "길 안내", names: { 0: "없음", 1: "안내 중" } }, speed_limit_kph: { label: "제한속도", unit: "km/h", d: 0 },
+  road_class: { label: "도로", names: { 0: "도심", 1: "지방도", 2: "고속도로" } },
+  tbt_type: { label: "회전 안내", names: { 0: "없음", 1: "좌회전", 2: "우회전", 3: "유턴", 4: "직진" } },
+  tbt_dist_m: { label: "회전 지점까지", unit: "m", d: 0 },
+  caution_type: { label: "주의 지점", names: { 0: "없음", 1: "스쿨존", 2: "과속방지턱", 3: "철길", 5: "사고 다발", 6: "안개", 8: "야생동물", 9: "내리막", 10: "낙석", 11: "좁은 길", 12: "미끄럼" } },
+  caution_dist_m: { label: "주의 지점까지", unit: "m", d: 0 }, school_zone: { label: "스쿨존", names: { 0: "밖", 1: "안" } },
+  camera_overspeed: { label: "카메라 과속", names: { 0: "정상", 1: "과속" } }, congestion: { label: "정체", names: { 0: "없음", 1: "서행", 2: "정체" } },
+  heading_deg: { label: "진행 방향", unit: "°", d: 0 },
+  odo_km: { label: "누적 거리", unit: "km", d: 1 }, outside_temp_c: { label: "바깥 온도", unit: "°C", d: 1 }, steer_bound_deg: { label: "조향 범위", unit: "°", d: 0 },
+};
+const GROUPS = [
+  ["주행", ["speed_kph", "gear", "brake_on", "steer_deg", "turn_signal", "cruise_active", "drive_mode"]],
+  ["날씨·빛", ["wiper_active", "low_beam", "night"]],
+  ["좌석", ["seats_occupied", "belts_buckled"]],
+  ["내비", ["nav_active", "speed_limit_kph", "road_class", "tbt_type", "tbt_dist_m", "caution_type", "caution_dist_m", "school_zone", "camera_overspeed", "congestion", "heading_deg"]],
+  ["그 밖", ["odo_km", "outside_temp_c", "steer_bound_deg"]],
+];
+
+function unknown(v) { return v === null || v === undefined || v === -1; }
+function fmt(k, v) {
+  if (unknown(v)) return "모름";
+  const c = CH[k] || {};
+  if (c.names) return c.names[v] ?? String(v);
+  const n = typeof v === "number" && c.d !== undefined ? v.toFixed(c.d) : String(v);
+  return c.unit ? `${n} ${c.unit}` : n;
+}
+
+// ------------------------------------------------------------------ server
+async function getJSON(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+async function command(cmd) {
+  let res;
+  try {
+    const r = await fetch("/api/command", { method: "POST", headers: { "Content-Type": "application/json", "X-SafeLog-Console": "1" }, body: JSON.stringify(cmd) });
+    res = await r.json();
+  } catch (e) {
+    res = { ok: false, errors: ["앱에 보내지 못했습니다 (" + e.message + ")"] };
+  }
+  addLog(cmd, res);
+  await refresh();
+  return res;
+}
+const set = (pairs) => command({ set: Object.entries(pairs).map(([k, v]) => `${k}=${v}`).join(",") });
+const clear = (...keys) => command({ clear: keys.join(",") });
+const cabin = (k, v) => command({ cabin: `${k}=${v}` });
+const appCmd = (line) => command({ app: line });
+
+function hms(d) { return [d.getHours(), d.getMinutes(), d.getSeconds()].map((n) => String(n).padStart(2, "0")).join(":"); }
+function addLog(cmd, res) {
+  const what = Object.entries(cmd).map(([k, v]) => `${k} ${v}`).join(" · ") || "확인";
+  pushLog(what + (res.message ? " → " + res.message : ""), res.ok !== false, res.errors || []);
+}
+function pushLog(what, ok, errors) {
+  recent.unshift({ t: hms(new Date()), what, ok, errors });
+  recent.length = Math.min(recent.length, 8);
+  $("#log").innerHTML = recent.map((r) =>
+    `<li class="${r.ok ? "" : "err"}"><span class="t">${r.t}</span>${esc(r.what)}${r.errors.map((e) => `<span class="e">${esc(e)}</span>`).join("")}</li>`).join("");
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+
+// ------------------------------------------------------------------ controls bound to a channel
+function names(ch) { return (catalog?.channels.find((c) => c.id === ch) || {}).names || {}; }
+function optValue(ch, opt) {
+  if (opt === "unknown") return -1;
+  const n = names(ch)[opt];
+  return n !== undefined ? n : Number(opt);
+}
+function buildSegs() {
+  for (const seg of $$(".seg")) {
+    seg.innerHTML = "";
+    for (const part of seg.dataset.opts.split("|")) {
+      const [val, label] = part.includes(":") ? part.split(":") : [part, part];
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = label; b.dataset.val = val;
+      if (val !== "car") b.classList.add("on");
+      b.addEventListener("click", () => {
+        if (seg.dataset.local !== undefined) { seg.dataset.local = val; paintSegs(); return; }
+        if (seg.dataset.appSeg) { appCmd(`${seg.dataset.appSeg} ${val}`); return; }
+        if (val === "car") clear(seg.dataset.ch); else set({ [seg.dataset.ch]: val });
+      });
+      seg.appendChild(b);
+    }
+  }
+}
+function paintSegs() {
+  for (const seg of $$(".seg")) {
+    const local = seg.dataset.local;
+    const ch = seg.dataset.ch;
+    const has = ch && state && Object.prototype.hasOwnProperty.call(state.frame, ch);
+    for (const b of $$("button", seg)) {
+      let pressed;
+      if (local !== undefined) pressed = b.dataset.val === local;
+      else if (seg.dataset.appSeg) pressed = state?.app_info?.[seg.dataset.appSeg] === b.dataset.val;
+      else if (b.dataset.val === "car") pressed = !has;
+      else pressed = has && state.frame[ch] === optValue(ch, b.dataset.val);
+      b.setAttribute("aria-pressed", pressed ? "true" : "false");
+    }
+  }
+}
+
+// ------------------------------------------------------------------ turn-by-turn
+$("#tbt-send").addEventListener("click", async () => {
+  const dist = Number($("#tbt-dist").value);
+  if (!(dist >= 0)) return;
+  const res = await set({ tbt_type: $("#tbt-type").dataset.local, tbt_dist_m: dist, nav_active: 1 });
+  if (res.ok) tbtSent = { dist, est: dist, lastAt: performance.now(), sentAt: Date.now() };
+});
+$("#tbt-end").addEventListener("click", () => { tbtSent = null; clear("tbt_type", "tbt_dist_m"); });
+function paintTbt() {
+  const note = $("#tbt-note");
+  const f = state?.frame || {};
+  if (f.tbt_dist_m === undefined) { note.className = "note"; note.textContent = "안내 없음"; return; }
+  const dir = CH.tbt_type.names[f.tbt_type] || "회전";
+  if (!tbtSent) { note.className = "note"; note.textContent = `${dir} ${Math.round(f.tbt_dist_m)} m 안내를 넣어 두었습니다 (이 페이지를 연 뒤에 보낸 것이 아니라 남은 거리는 모릅니다).`; return; }
+  const v = state?.app?.speed_kph;
+  const now = performance.now();
+  if (typeof v === "number") tbtSent.est -= (v / 3.6) * ((now - tbtSent.lastAt) / 1000);
+  tbtSent.lastAt = now;
+  const sec = Math.round((Date.now() - tbtSent.sentAt) / 1000);
+  if (typeof v !== "number") { note.className = "note warn"; note.textContent = `${dir} ${tbtSent.dist} m 안내를 보냈습니다 (${sec}초 전). 앱이 속도를 몰라 남은 거리를 셀 수 없습니다. 속도는 콘솔이나 '그 밖의 채널'의 speed_kph로 넣으세요.`; return; }
+  if (tbtSent.est > 0) { note.className = "note good"; note.textContent = `${dir}까지 약 ${Math.round(tbtSent.est)} m (앱 속도로 셈, ${sec}초 전 ${tbtSent.dist} m)`; }
+  else { note.className = "note warn"; note.textContent = `회전 지점을 지났습니다 (약 ${Math.round(-tbtSent.est)} m). 핸들을 돌린 뒤 '안내 끝'을 누르세요.`; }
+}
+
+// ------------------------------------------------------------------ road, caution, place
+$$("[data-set-from]").forEach((b) => b.addEventListener("click", () => {
+  const v = $("#" + b.dataset.setFrom).value;
+  if (v !== "") set({ [b.dataset.ch]: v });
+}));
+$$("[data-clear]").forEach((b) => b.addEventListener("click", () => clear(b.dataset.clear)));
+$("#caution-send").addEventListener("click", () => set({ caution_type: $("#caution-type").value, caution_dist_m: Number($("#caution-dist").value) || 0 }));
+$("#caution-end").addEventListener("click", () => clear("caution_type", "caution_dist_m"));
+$("#place-send").addEventListener("click", () => { const p = $("#place").value.trim(); if (p) command({ place: p }); });
+
+// ------------------------------------------------------------------ 내 차 익히기 cabin controls
+const CABIN = [
+  { k: "seat_position", label: "시트 위치", step: [0, 10], minus: "앞으로", plus: "뒤로" },
+  { k: "parking_brake", label: "주차 브레이크", on: "걸기", off: "풀기" },
+  { k: "high_beam", label: "상향등" }, { k: "window", label: "창문", on: "열기", off: "닫기" },
+  { k: "door_lock", label: "도어 잠금", on: "잠그기", off: "풀기" }, { k: "defrost", label: "앞유리 성에 제거" },
+  { k: "wiper_auto", label: "와이퍼 자동" }, { k: "seat_heat", label: "시트 열선" }, { k: "wheel_heat", label: "핸들 열선" },
+  { k: "mirror_heat", label: "사이드미러 열선" }, { k: "ac", label: "에어컨" }, { k: "seat_vent", label: "시트 통풍" },
+  { k: "auto_hold", label: "오토홀드" }, { k: "fan", label: "풍량", step: [0, 8], minus: "줄이기", plus: "늘리기" },
+];
+function buildCabin() {
+  const grid = $("#cabin-grid");
+  grid.innerHTML = "";
+  for (const c of CABIN) {
+    if (catalog && !catalog.cabin.includes(c.k)) continue;
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `<span class="label">${c.label}</span><div class="controls"></div>`;
+    const box = $(".controls", row);
+    const add = (text, fn) => { const b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = text; b.addEventListener("click", fn); box.appendChild(b); };
+    if (c.step) {
+      const cur = () => { const v = state?.cabin?.[c.k]; return typeof v === "number" ? v : Math.round((c.step[0] + c.step[1]) / 2); };
+      add(c.minus, () => cabin(c.k, Math.max(c.step[0], cur() - 1)));
+      add(c.plus, () => cabin(c.k, Math.min(c.step[1], cur() + 1)));
+    } else {
+      add(c.on || "켜기", () => cabin(c.k, true));
+      add(c.off || "끄기", () => cabin(c.k, false));
+    }
+    const val = document.createElement("span");
+    val.className = "val"; val.dataset.cabin = c.k; val.textContent = "-";
+    box.appendChild(val);
+    grid.appendChild(row);
+  }
+}
+$("#cabin-clear").addEventListener("click", () => { const ks = Object.keys(state?.cabin || {}); if (ks.length) clear(...ks); });
+function paintCabin() {
+  for (const el of $$("[data-cabin]")) {
+    const v = state?.cabin?.[el.dataset.cabin];
+    el.classList.toggle("set", v !== undefined);
+    el.textContent = v === undefined ? "-" : v === true ? "켬" : v === false ? "끔" : String(v);
+  }
+  const g = state?.app?.gear;
+  $("#cabin-warn").hidden = !(state?.listening && g !== undefined && g !== 0);
+}
+
+/** "넣음: …" next to inputs whose value is not visible from a segmented control. */
+function paintShows() {
+  const f = state?.frame || {};
+  for (const el of $$("[data-shows]")) {
+    const keys = el.dataset.shows.split(",").filter((k) => Object.prototype.hasOwnProperty.call(f, k));
+    el.classList.toggle("set", keys.length > 0);
+    el.textContent = keys.length ? "넣음: " + keys.map((k) => fmt(k, f[k])).join(" · ") : "";
+  }
+}
+
+// ------------------------------------------------------------------ any channel
+function buildAny() {
+  const sel = $("#any-ch");
+  sel.innerHTML = catalog.channels.map((c) => `<option value="${c.id}">${CH[c.id]?.label ? CH[c.id].label + " · " : ""}${c.id}</option>`).join("");
+  const fill = () => {
+    const c = catalog.channels.find((x) => x.id === sel.value);
+    $("#any-names").innerHTML = ["unknown", ...(c ? Object.keys(c.names) : [])].map((n) => `<option value="${n}">`).join("");
+  };
+  sel.addEventListener("change", fill);
+  fill();
+}
+$("#any-set").addEventListener("click", () => { const v = $("#any-val").value.trim(); if (v) set({ [$("#any-ch").value]: v }); });
+$("#any-clear").addEventListener("click", () => clear($("#any-ch").value));
+function paintChips() {
+  const f = state?.frame || {};
+  const keys = Object.keys(f);
+  $("#chips").innerHTML = keys.length ? keys.map((k) => `<span class="chip">${esc(k)}=${esc(f[k] === null ? "nan" : f[k])}<button title="차 값으로" data-k="${esc(k)}">×</button></span>`).join("") : `<span class="empty">없음</span>`;
+  $$("#chips button").forEach((b) => b.addEventListener("click", () => clear(b.dataset.k)));
+}
+
+// ------------------------------------------------------------------ app commands (the same buttons as the app's 시연 panel)
+$$("[data-app]").forEach((b) => b.addEventListener("click", () => appCmd(b.dataset.app)));
+$("#points-send").addEventListener("click", () => { const n = $("#points").value.trim(); if (n) appCmd(`points ${n}`); });
+function buildApp() {
+  const box = $("#trips");
+  const trips = catalog?.app?.trips;
+  if (!trips) { box.innerHTML = `<span class="empty">이 앱은 앱 명령을 받지 않습니다</span>`; return; }
+  box.innerHTML = "";
+  for (const t of trips) {
+    const b = document.createElement("button");
+    b.className = "btn"; b.type = "button"; b.dataset.trip = t.name; b.textContent = t.title;
+    b.title = `${t.name} · ${Math.round(t.duration_s / 60)}분`;
+    b.addEventListener("click", () => appCmd(`replay ${t.name} ${$("#replay-speed").dataset.local}`));
+    box.appendChild(b);
+  }
+  const arrive = document.createElement("button");
+  arrive.className = "btn primary"; arrive.type = "button"; arrive.id = "arrive"; arrive.textContent = "도착 (P)";
+  arrive.addEventListener("click", () => appCmd("arrive"));
+  box.appendChild(arrive);
+}
+function paintApp() {
+  const a = state?.app_info;
+  const running = a?.replay || null;
+  $$("#trips [data-trip]").forEach((b) => { b.disabled = !a || !!running; });
+  const arrive = $("#arrive");
+  if (arrive) arrive.disabled = !running;
+  const note = $("#replay-note");
+  if (!a) { note.className = "note"; note.textContent = "앱 상태를 받지 못했습니다"; }
+  else if (running) {
+    const t = (catalog?.app?.trips || []).find((x) => x.name === running);
+    note.className = "note good"; note.textContent = `재생 중: ${t ? t.title : running}`;
+  } else { note.className = "note"; note.textContent = "재생 중이 아님"; }
+  const parked = a?.phase === "Parked";
+  $("#tour-next").textContent = !a ? "-" : a.tour_next ? `지금: ${a.tour_next}${parked ? "" : " (주차 중에만 셉니다)"}` : a.tour_finished ? "꼭 익힐 것을 다 했습니다" : "남은 단계 없음";
+  $("#mode-now").textContent = !a ? "-" : a.mode === "Training" ? "지금: 연수 모드" : "지금: 평소 모드";
+  $("#points-now").textContent = !a ? "-" : `엔진 잔액 ${a.points}P`;
+  $("#engine-now").textContent = a?.engine || "-";
+  $("#sync-now").textContent = a?.sync || "-";
+  $$("#sample-moments button").forEach((b) => { b.disabled = !(a && a.screen === "sample"); });
+}
+
+// ------------------------------------------------------------------ live panel
+function paintLive() {
+  const app = state?.app, car = state?.car, f = state?.frame || {};
+  if (!app) { $("#live").innerHTML = ""; $("#live-line").textContent = state?.listening ? "프레임을 기다리는 중" : "앱이 차 신호를 받고 있지 않습니다"; return; }
+  const g = app.gear, v = app.speed_kph;
+  const phase = g === 0 ? "주차" : g === 3 && (typeof v !== "number" || v < 1) ? "정차" : g === 3 ? "주행" : g === 1 ? "후진" : g === 2 ? "중립" : "기어 모름";
+  const age = state.age_ms === null || state.age_ms === undefined ? "" : ` · ${(state.age_ms / 1000).toFixed(1)}초 전 프레임`;
+  $("#live-line").textContent = `${state.source || ""} · 기어·속도로 본 상태: ${phase}${age}`;
+  let html = "";
+  for (const [title, keys] of GROUPS) {
+    html += `<tr><th colspan="3">${title}</th></tr>`;
+    for (const k of keys) {
+      const test = Object.prototype.hasOwnProperty.call(f, k);
+      const val = app[k];
+      const carNote = test ? `<small>차: ${esc(fmt(k, car?.[k]))}</small>` : "";
+      html += `<tr><td class="k">${CH[k].label}</td><td class="v${unknown(val) ? " unknown" : ""}">${esc(fmt(k, val))}${carNote}</td>` +
+        `<td class="src"><span class="tag${test ? " test" : ""}">${test ? "시험" : "차"}</span></td></tr>`;
+    }
+  }
+  $("#live").innerHTML = html;
+}
+function paintStatus() {
+  const st = state?.status || {};
+  const keys = Object.keys(st);
+  $("#status").innerHTML = keys.length ? keys.map((k) => `<dt>${esc(k)}</dt><dd>${esc(st[k])}</dd>`).join("") : `<dt>-</dt><dd>앱이 차 신호를 받고 있지 않습니다</dd>`;
+}
+
+// ------------------------------------------------------------------ app restarts
+// The test signals live in the app process. started_ms changes when the app comes back (reinstall, crash,
+// force stop), and everything that was put in is gone by then.
+let startedMs = null;
+function noteRestart() {
+  const s = state?.started_ms;
+  if (typeof s !== "number") return;
+  if (startedMs !== null && s !== startedMs) {
+    tbtSent = null;
+    const at = hms(new Date(s));
+    $("#restarted-text").textContent = `앱이 다시 떴습니다(${at}). 그 전에 넣은 차 신호는 모두 사라졌으니 필요하면 다시 넣으세요.`;
+    $("#restarted").classList.add("show");
+    pushLog(`앱이 다시 뜸 (${at}) · 넣은 값 사라짐`, false, []);
+  }
+  startedMs = s;
+}
+$("#restarted-ok").addEventListener("click", () => $("#restarted").classList.remove("show"));
+
+// ------------------------------------------------------------------ loop
+function paintHeader(ok) {
+  const conn = $("#conn"), banner = $("#banner");
+  if (!ok) {
+    conn.className = "pill bad"; conn.textContent = "연결 끊김";
+    banner.className = "banner show"; banner.textContent = "앱과 연결이 끊겼습니다. 에뮬레이터에서 앱(debug 빌드)이 떠 있는지, adb forward tcp:8077 tcp:8077을 했는지 확인하세요. 다시 연결되면 저절로 이어집니다.";
+    return;
+  }
+  if (state.listening) { conn.className = "pill ok"; conn.textContent = "앱 연결됨"; banner.className = "banner"; }
+  else {
+    conn.className = "pill warn"; conn.textContent = "차 신호 받기 전";
+    banner.className = "banner warn show"; banner.textContent = "앱이 아직 차 신호를 받고 있지 않습니다. 앱 화면을 한 번 열면 넣은 값이 그때부터 들어갑니다.";
+  }
+  const n = Object.keys(state.frame || {}).length + Object.keys(state.cabin || {}).length;
+  const count = $("#count");
+  count.className = n ? "pill plain accent" : "pill plain"; count.textContent = `넣은 값 ${n}개`;
+}
+let busy = false;
+async function refresh() {
+  if (busy) return;
+  busy = true;
+  try {
+    if (!catalog) { catalog = await getJSON("/api/catalog"); buildSegs(); buildCabin(); buildAny(); buildApp(); }
+    state = await getJSON("/api/state");
+    noteRestart();
+    paintHeader(true); paintSegs(); paintTbt(); paintCabin(); paintShows(); paintChips(); paintApp(); paintLive(); paintStatus();
+  } catch (e) {
+    paintHeader(false);
+  } finally {
+    busy = false;
+  }
+}
+$("#clear-all").addEventListener("click", () => { tbtSent = null; clear("all"); });
+buildSegs();
+refresh();
+setInterval(refresh, 500);
+</script>
+</body>
+</html>

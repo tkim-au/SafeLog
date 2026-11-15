@@ -1,0 +1,13 @@
+{
+  "machine": "AMD64 Family 25 Model 33 Stepping 0, AuthenticAMD / Python 3.12.0",
+  "trips": 10,
+  "driving_hours": 5.89,
+  "in_drive_us_per_frame": 7.13,
+  "in_drive_cpu_percent_of_one_core": 0.0071,
+  "recorder_MB_per_hour": 0.792,
+  "parked_batch_seconds_per_driving_hour": 0.1,
+  "parked_batch_seconds_per_trip": 0.059,
+  "gate_parameters": 25477,
+  "gate_size_kB_fp32": 99.5,
+  "pleos_budget": "driving < 5 % CPU (non-navigation app), parked <= 25 %, RAM <= 400 MB (document.pleos.ai performance-resource-mgmt)"
+}

@@ -1,0 +1,10 @@
+numpy>=1.26
+scipy>=1.11
+pyyaml>=6.0
+torch>=2.3          # Windows + RTX 3060 Ti: pip install torch --index-url https://download.pytorch.org/whl/cu124
+# optional simulators
+eclipse-sumo>=1.20  # SUMO traffic adapter (CPU)
+libsumo>=1.20
+traci>=1.20        # needed only for --gui (watch SUMO)
+matplotlib>=3.8    # trip viewer
+# carla==0.9.15     # install the wheel that matches your CARLA server version
